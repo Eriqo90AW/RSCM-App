@@ -11,6 +11,10 @@ import serial
 import serial.tools.list_ports
 import time
 import pyrebase
+import random
+
+#import custom class for plotting graph
+from plot_graph import PlotGraph
 
 # GUI
 from ui_app import Ui_MainWindow
@@ -122,9 +126,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     self.index = 0
     self.pause = 2
 
-    timer = QtCore.QTimer()
-    timer.timeout.connect(self.graphUpdate)
-    timer.start(1000)
+    # #update graph every 1000 miliseconds
+    # timer = QtCore.QTimer()
+    # timer.timeout.connect(self.graphUpdate)
+    # timer.start(1000)
+
+    # #array to hold random numbers
+    # self.array_x = []
+    # self.array_y = []
 
     # Firebase 
     # self.firebase = firebase.FirebaseApplication('https://pythonrscm-default-rtdb.firebaseio.com/', None)  
@@ -164,33 +173,46 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
   # Uodating the graph
   def graphUpdate(self, int_array):
-    if(self.index < 50):
-      self.widget_graph.setXRange(0, self.index, padding=0)
-    elif(self.index < 250):
-      self.widget_graph.setXRange(self.index-50, self.index, padding=0)
-    elif(self.index >= 250):
-      self.widget_graph.setXRange(self.index-100, self.index, padding=0)
-    elif(self.index >= 300):
-      self.widget_graph.setXRange(self.index-300, self.index, padding=0)
+    # if(self.index < 50):
+    #   self.widget_graph.setXRange(0, self.index, padding=0)
+    # elif(self.index < 250):
+    #   self.widget_graph.setXRange(self.index-50, self.index, padding=0)
+    # elif(self.index >= 250):
+    #   self.widget_graph.setXRange(self.index-100, self.index, padding=0)
+    # elif(self.index >= 300):
+    #   self.widget_graph.setXRange(self.index-300, self.index, padding=0)
 
-    self.y[self.index] = calculate(self, int_array)
-    self.y1[self.index] = int_array[0]
-    self.y2[self.index] = int_array[1]
-    self.y3[self.index] = int_array[2]
+    # self.y[self.index] = calculate(self, int_array)
+    # self.y1[self.index] = int_array[0]
+    # self.y2[self.index] = int_array[1]
+    # self.y3[self.index] = int_array[2]
     
 
-    if(self.pause == 0):
-      if(self.index == self.range-1):
-        self.index = 0
-      else:
-        self.index += 1
+    # if(self.pause == 0):
+    #   if(self.index == self.range-1):
+    #     self.index = 0
+    #   else:
+    #     self.index += 1
 
-      self.curve.setData(self.y)
-      self.curve1.setData(self.y1)
-      self.curve2.setData(self.y2)
-      self.curve3.setData(self.y3)
-    else:
-      self.index = self.index
+    #   self.curve.setData(self.y)
+    #   self.curve1.setData(self.y1)
+    #   self.curve2.setData(self.y2)
+    #   self.curve3.setData(self.y3)
+    # else:
+    #   self.index = self.index
+
+    print("updating graph")
+    # x_values, y_values = self.get_new_data()
+
+    # # Update the curve with the new data
+    # self.curve.setData(x_values, y_values)
+
+  # def get_new_data(self):
+  #   random_x = 0.01
+  #   random_y = random.randint(600, 1200)
+  #   self.array_x.append(random_x)
+  #   self.array_y.append(random_y)
+  #   return self.array_x, self.array_y
 
   # Register new patient
   def register(self):
@@ -275,39 +297,38 @@ class WorkerThread(QtCore.QThread):
   # Function which is executed by the thread (must be named 'run')    
   def run(self):
     # Reading data from serial port
-    serialPorts  = serial_ports()
-    currentPortName = serialPorts[0]
-    currentPort = connect_port(currentPortName)
-    
-    while(True):
-      if currentPort.in_waiting:
-        line = currentPort.readline()
-        decoded = line.decode('utf').strip("\r\n")
+    # serialPorts  = serial_ports()
+    # currentPortName = serialPorts[0]
+    # currentPort = connect_port(currentPortName)
+    print("Thread started")
+
+    # pen = pg.mkPen(color='k', width=2)
+    # curve = self.widget_graph.plot(pen=pen)
+
+    # myGraph = PlotGraph()
+    # while(True):
+    #   if currentPort.in_waiting:
+    #     line = currentPort.readline()
+    #     decoded = line.decode('utf').strip("\r\n")
         
-        arr = decoded.split(',')
-        arrInt = list(map(int, arr))
-        self.int_signal.emit(arrInt)
+    #     arr = decoded.split(',')
+    #     arrInt = list(map(int, arr))
+    #     self.int_signal.emit(arrInt)
     
 # Fungsi nyoba-nyoba
-def calculate(self, all_data):
-    sum = 0
-    count = 0
-    for i in all_data:
-      sum += i
-      count+=1
+# def calculate(self, all_data):
+#     sum = 0
+#     count = 0
+#     for i in all_data:
+#       sum += i
+#       count+=1
 
-    avg = sum/count
-    return avg
+#     avg = sum/count
+#     return avg
 
-
-# Standard pyqt app
-def main():
+if __name__ == '__main__':
   app = QApplication(sys.argv)
   window = MainWindow()
   window.setWindowTitle("Surface Gating")
   window.show()
   app.exec_()
-
-if __name__ == '__main__':
-  main()
-
