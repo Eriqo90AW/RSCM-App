@@ -6,82 +6,125 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>877</width>
-    <height>578</height>
+    <width>900</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="winmenu_graph">
    <property name="styleSheet">
-    <string notr="true">*{
+    <string notr="true">*
+{
 color: #fff;
 font-family: 'Trebuchet MS';
 font-size: 16px;
 border: nine;
 background: none;
 }
-#centralwidget{
-background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.48, stop:0 rgba(0, 100,180, 200), stop:1 rgba(0, 100, 115, 123));
-}
-#left_menu_widget, #main_graph, #average_graph, #sensors_graph
+#frame_graph_gbframe QComboBox
 {
-background-color: rgba(61, 80, 95, 100)
-}
-#frame_4 QPushButton{
+text-align: center;
 padding: 10px;
 border-radius: 5px;
 background-color: rgba(33, 43, 51, 100);
 }
-#frame_4 QPushButton:hover{
+#frame_graph_gbframe QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(61, 80, 95, 100);
+}
+#winmenu_graph
+{
+background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.48, stop:0 rgba(0, 100,180, 200), stop:1 rgba(0, 100, 115, 123));
+}
+#frame_graph_head, #frame_graph_tframe
+{
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(50, 150,200, 235), stop:1 rgba(235, 255, 255, 155));
+border-radius: 5px;
+font-size: 14px;
+}
+#frame_graph_left, #widget_main_graph, #widget_average_graph, #widget_sensors_graph, #frame_graph_inleft, #frame_graph_inright
+{
+background-color: rgba(61, 80, 95, 100);
+}
+#label_graph_tlabel
+{
+    font-family: 'Segoe UI';
+    font-size: 24px;
+}
+#frame_graph_inleft QLabel
+{
+font-size: 14px;
+}
+#frame_graph_inright QLabel
+{
+font-size: 14px;
+}
+#frame_graph_gbframe QPushButton
+{
+padding: 10px;
+border-radius: 5px;
+background-color: rgba(33, 43, 51, 100);
+}
+#frame_graph_gbframe QPushButton:hover
+{
 padding: 10px;
 border-radius: 5px;
 background-color: rgb(120, 157, 186);
 }
-#header_nav QPushButton{
-	background-color: transparent;
-	border-radius: 15px;
+#frame_graph_sframe QPushButton
+{
+	padding: 12px;
+	border-radius: 5px;
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(50, 150,200, 235), stop:1 rgba(235, 255, 255, 155));
 }
-#header_nav QPushButton:hover{
-	background-color: rgb(120, 157, 186);
-}
-#header_menu QPushButton:hover{
-	border-radius: 10px;
-	background-color: rgb(120, 157, 186);
-}
-#frame_graph_settings:hover{
+#frame_graph_sframe QPushButton:hover
+{
 	border-radius: 5px;
 	background-color: rgb(120, 157, 186);
 }
-#header_frame, #frame_graph_title, #frame_graph_settings{
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(50, 150,200, 235), stop:1 rgba(235, 255, 255, 155));
-border-radius: 5px;
+#frame_graph_head QPushButton
+{
+	background-color: transparent;
+	border-radius: 15px;
 }
-#label_graph_title{
-    font-family: 'Segoe UI';
-    font-size: 24px;
+#frame_graph_head QPushButton:hover
+{
+	background-color: rgb(120, 157, 186);
 }
-#frame_graph_util QPushButton{
+#frame_graph_menu QPushButton:hover
+{
+	border-radius: 10px;
+	background-color: rgb(120, 157, 186);
+}
+#frame_graph_util QPushButton
+{
 font-size: 13px;
 padding: 10px;
 border-radius: 5px;
 background-color: rgba(33, 43, 51, 100);
 }
-#frame_graph_util QPushButton:hover{
+#frame_graph_util QPushButton:hover
+{
 	border-radius: 5px;
 	background-color: rgba(61, 80, 95, 100)
 }</string>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QWidget" name="left_menu_widget" native="true">
+     <widget class="QWidget" name="frame_graph_left" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
-       <item alignment="Qt::AlignTop">
-        <widget class="QFrame" name="frame_graph_title">
+       <item>
+        <widget class="QFrame" name="frame_graph_tframe">
          <property name="minimumSize">
           <size>
            <width>200</width>
+           <height>80</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
            <height>80</height>
           </size>
          </property>
@@ -102,13 +145,13 @@ background-color: rgba(33, 43, 51, 100);
            <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>10</number>
+           <number>15</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
           </property>
           <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-           <widget class="QLabel" name="label_12">
+           <widget class="QLabel" name="label_graph_ticon">
             <property name="minimumSize">
              <size>
               <width>40</width>
@@ -133,7 +176,7 @@ background-color: rgba(33, 43, 51, 100);
            </widget>
           </item>
           <item alignment="Qt::AlignLeft">
-           <widget class="QLabel" name="label_graph_title">
+           <widget class="QLabel" name="label_graph_tlabel">
             <property name="font">
              <font>
               <family>Segoe UI</family>
@@ -148,8 +191,8 @@ background-color: rgba(33, 43, 51, 100);
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QFrame" name="frame_4">
+       <item alignment="Qt::AlignTop">
+        <widget class="QFrame" name="frame_graph_gbframe">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -158,7 +201,7 @@ background-color: rgba(33, 43, 51, 100);
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="button_graph_main">
             <property name="font">
              <font>
               <family>Trebuchet MS</family>
@@ -175,7 +218,7 @@ background-color: rgba(33, 43, 51, 100);
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="button_graph_average">
             <property name="font">
              <font>
               <family>Trebuchet MS</family>
@@ -188,33 +231,89 @@ background-color: rgba(33, 43, 51, 100);
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="font">
-             <font>
-              <family>Trebuchet MS</family>
-              <pointsize>-1</pointsize>
-             </font>
+           <widget class="QComboBox" name="combo_graph_sensors">
+            <property name="styleSheet">
+             <string notr="true">QComboBox QAbstractItemView::item:hover {
+    background-color: black;
+}
+QComboBox::down-arrow {
+    color: black;
+}
+</string>
             </property>
-            <property name="text">
-             <string>Sensor Graph</string>
+            <property name="editable">
+             <bool>false</bool>
             </property>
+            <property name="currentText">
+             <string>Sensors Graph</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Sensors Graph</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 6</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 7</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 8</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Sensor 9</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-        <widget class="QFrame" name="frame_graph_settings">
+       <item>
+        <widget class="QFrame" name="frame_graph_sframe">
          <property name="minimumSize">
           <size>
-           <width>200</width>
-           <height>50</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>100</height>
+           <height>50</height>
           </size>
          </property>
          <property name="frameShape">
@@ -223,7 +322,7 @@ background-color: rgba(33, 43, 51, 100);
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_13">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -234,106 +333,33 @@ background-color: rgba(33, 43, 51, 100);
            <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>30</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
-          <item alignment="Qt::AlignRight">
-           <widget class="QFrame" name="frame_11">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+            <property name="text">
+             <string>  Settings</string>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_15">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>5</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="pushButton_10">
-               <property name="minimumSize">
-                <size>
-                 <width>40</width>
-                 <height>40</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>40</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="resources.qrc">
-                 <normaloff>:/icons/icons/engine-gears-icon.svg</normaloff>:/icons/icons/engine-gears-icon.svg</iconset>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item alignment="Qt::AlignLeft">
-           <widget class="QFrame" name="frame_10">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/icons/engine-gears-icon.svg</normaloff>:/icons/icons/engine-gears-icon.svg</iconset>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_14">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_graph_settings_2">
-               <property name="font">
-                <font>
-                 <family>Trebuchet MS</family>
-                 <pointsize>-1</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Settings</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QFrame" name="frame_6">
+       <item alignment="Qt::AlignTop">
+        <widget class="QFrame" name="frame_graph_crlframe">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -342,21 +368,21 @@ background-color: rgba(33, 43, 51, 100);
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="frame_graph_crllabel2">
             <property name="text">
              <string>Surface Gating App</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="frame_graph_crllabel1">
             <property name="text">
              <string>For Education Purposes Only</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="frame_graph_crllabel3">
             <property name="text">
              <string>All Rights Reserved</string>
             </property>
@@ -369,7 +395,7 @@ background-color: rgba(33, 43, 51, 100);
      </widget>
     </item>
     <item>
-     <widget class="QFrame" name="frame_2">
+     <widget class="QFrame" name="frame_graph_right">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -378,7 +404,7 @@ background-color: rgba(33, 43, 51, 100);
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item alignment="Qt::AlignTop">
-        <widget class="QFrame" name="header_frame">
+        <widget class="QFrame" name="frame_graph_head">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -408,7 +434,7 @@ background-color: rgba(33, 43, 51, 100);
            <number>0</number>
           </property>
           <item alignment="Qt::AlignLeft">
-           <widget class="QFrame" name="header_menu">
+           <widget class="QFrame" name="frame_graph_menu">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -429,7 +455,7 @@ background-color: rgba(33, 43, 51, 100);
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_6">
+              <widget class="QPushButton" name="button_graph_menu">
                <property name="text">
                 <string/>
                </property>
@@ -446,7 +472,7 @@ background-color: rgba(33, 43, 51, 100);
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_graph_menu">
                <property name="font">
                 <font>
                  <family>Trebuchet MS</family>
@@ -462,7 +488,7 @@ background-color: rgba(33, 43, 51, 100);
            </widget>
           </item>
           <item alignment="Qt::AlignHCenter">
-           <widget class="QFrame" name="header_dash">
+           <widget class="QFrame" name="frame_graph_dash">
             <property name="font">
              <font>
               <family>Trebuchet MS</family>
@@ -477,7 +503,7 @@ background-color: rgba(33, 43, 51, 100);
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="label_graph_dash">
                <property name="font">
                 <font>
                  <family>Trebuchet MS</family>
@@ -493,7 +519,7 @@ background-color: rgba(33, 43, 51, 100);
            </widget>
           </item>
           <item alignment="Qt::AlignRight">
-           <widget class="QFrame" name="header_nav">
+           <widget class="QFrame" name="frame_graph_nav">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -517,7 +543,7 @@ background-color: rgba(33, 43, 51, 100);
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_9">
+              <widget class="QPushButton" name="button_graph_minimize">
                <property name="minimumSize">
                 <size>
                  <width>30</width>
@@ -540,7 +566,7 @@ background-color: rgba(33, 43, 51, 100);
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_8">
+              <widget class="QPushButton" name="button_graph_expand">
                <property name="minimumSize">
                 <size>
                  <width>30</width>
@@ -563,7 +589,7 @@ background-color: rgba(33, 43, 51, 100);
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_7">
+              <widget class="QPushButton" name="button_graph_close">
                <property name="minimumSize">
                 <size>
                  <width>30</width>
@@ -592,7 +618,7 @@ background-color: rgba(33, 43, 51, 100);
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame_8">
+        <widget class="QFrame" name="frame_graph_swframe">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -607,14 +633,14 @@ background-color: rgba(33, 43, 51, 100);
            <number>0</number>
           </property>
           <item>
-           <widget class="QStackedWidget" name="stackedWidget">
+           <widget class="QStackedWidget" name="swidget_graph_swgraph">
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
-            <widget class="QWidget" name="main_graph">
+            <widget class="QWidget" name="widget_main_graph">
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item alignment="Qt::AlignTop">
-               <widget class="QFrame" name="frame_15">
+               <widget class="QFrame" name="frame_graph_mlabel">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -623,7 +649,7 @@ background-color: rgba(33, 43, 51, 100);
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item alignment="Qt::AlignTop">
-                  <widget class="QLabel" name="label_9">
+                  <widget class="QLabel" name="label_graph_main">
                    <property name="font">
                     <font>
                      <family>Trebuchet MS</family>
@@ -642,7 +668,7 @@ background-color: rgba(33, 43, 51, 100);
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_16">
+               <widget class="QFrame" name="frame_graph_mgraph">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -660,10 +686,10 @@ background-color: rgba(33, 43, 51, 100);
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="average_graph">
+            <widget class="QWidget" name="widget_average_graph">
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QFrame" name="frame_18">
+               <widget class="QFrame" name="frame_graph_avglabel">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -672,7 +698,7 @@ background-color: rgba(33, 43, 51, 100);
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
                  <item alignment="Qt::AlignTop">
-                  <widget class="QLabel" name="label_10">
+                  <widget class="QLabel" name="label_graph_average">
                    <property name="font">
                     <font>
                      <family>Trebuchet MS</family>
@@ -680,7 +706,7 @@ background-color: rgba(33, 43, 51, 100);
                     </font>
                    </property>
                    <property name="text">
-                    <string>Sensor 1 Graph</string>
+                    <string>Average Graph</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -691,7 +717,7 @@ background-color: rgba(33, 43, 51, 100);
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_17">
+               <widget class="QFrame" name="frame_graph_avggraph">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -709,10 +735,10 @@ background-color: rgba(33, 43, 51, 100);
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="sensors_graph">
+            <widget class="QWidget" name="widget_sensors_graph">
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QFrame" name="frame_20">
+               <widget class="QFrame" name="frame_graph_slabel">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -721,7 +747,7 @@ background-color: rgba(33, 43, 51, 100);
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_9">
                  <item alignment="Qt::AlignTop">
-                  <widget class="QLabel" name="label_11">
+                  <widget class="QLabel" name="label_graph_sensor">
                    <property name="font">
                     <font>
                      <family>Trebuchet MS</family>
@@ -729,7 +755,7 @@ background-color: rgba(33, 43, 51, 100);
                     </font>
                    </property>
                    <property name="text">
-                    <string>Sensor 2 Graph</string>
+                    <string>Sensor Graph</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -740,7 +766,7 @@ background-color: rgba(33, 43, 51, 100);
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_19">
+               <widget class="QFrame" name="frame_graph_sgraph">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -781,6 +807,9 @@ background-color: rgba(33, 43, 51, 100);
           <property name="rightMargin">
            <number>11</number>
           </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
           <item>
            <widget class="QPushButton" name="button_graph_start">
             <property name="text">
@@ -806,7 +835,7 @@ background-color: rgba(33, 43, 51, 100);
         </widget>
        </item>
        <item alignment="Qt::AlignBottom">
-        <widget class="QFrame" name="frame_9">
+        <widget class="QFrame" name="frame_graph_info">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -821,7 +850,7 @@ background-color: rgba(33, 43, 51, 100);
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <property name="spacing">
-           <number>0</number>
+           <number>10</number>
           </property>
           <property name="leftMargin">
            <number>15</number>
@@ -836,7 +865,7 @@ background-color: rgba(33, 43, 51, 100);
            <number>0</number>
           </property>
           <item alignment="Qt::AlignVCenter">
-           <widget class="QFrame" name="frame_13">
+           <widget class="QFrame" name="frame_graph_inleft">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -845,252 +874,53 @@ background-color: rgba(33, 43, 51, 100);
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_11">
              <property name="spacing">
-              <number>0</number>
+              <number>4</number>
              </property>
              <property name="leftMargin">
-              <number>0</number>
+              <number>15</number>
              </property>
              <property name="topMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <property name="rightMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <item>
-              <widget class="QFrame" name="frame_7">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
+              <widget class="QLabel" name="label_graph_id">
+               <property name="text">
+                <string>ID : 1</string>
                </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_9">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label">
-                  <property name="maximumSize">
-                   <size>
-                    <width>62</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Trebuchet MS</family>
-                    <pointsize>-1</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>ID</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>: </string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
+              <widget class="QLabel" name="label_graph_name">
+               <property name="text">
+                <string>Name : Username</string>
                </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_11">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_8">
-                  <property name="maximumSize">
-                   <size>
-                    <width>62</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Trebuchet MS</family>
-                    <pointsize>-1</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Nama</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_13">
-                  <property name="text">
-                   <string>: </string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_5">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
+              <widget class="QLabel" name="label_graph_gender">
+               <property name="text">
+                <string>Gender : Laki-laki</string>
                </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_12">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_14">
-                  <property name="maximumSize">
-                   <size>
-                    <width>55</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Trebuchet MS</family>
-                    <pointsize>-1</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Gender</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_15">
-                  <property name="text">
-                   <string> : </string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_3">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
+              <widget class="QLabel" name="label_graph_umur">
+               <property name="text">
+                <string>Umur : 20</string>
                </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_13">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_16">
-                  <property name="minimumSize">
-                   <size>
-                    <width>10</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>62</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Trebuchet MS</family>
-                    <pointsize>-1</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Umur</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_17">
-                  <property name="text">
-                   <string>: </string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
               </widget>
              </item>
             </layout>
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frame_14">
+           <widget class="QFrame" name="frame_graph_inright">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -1099,45 +929,45 @@ background-color: rgba(33, 43, 51, 100);
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_12">
              <property name="spacing">
-              <number>0</number>
+              <number>4</number>
              </property>
              <property name="leftMargin">
-              <number>0</number>
+              <number>15</number>
              </property>
              <property name="topMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <property name="rightMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_18">
+              <widget class="QLabel" name="label_graph_max">
                <property name="text">
-                <string>1</string>
+                <string>Max : 100 mm</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_21">
+              <widget class="QLabel" name="label_graph_min">
                <property name="text">
-                <string>Loren Ipsum</string>
+                <string>Min : 2 mm</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_19">
+              <widget class="QLabel" name="label_graph_avg">
                <property name="text">
-                <string>Laki-laki</string>
+                <string>Average : 51 mm</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_20">
+              <widget class="QLabel" name="label_graph_rate">
                <property name="text">
-                <string>1</string>
+                <string>Rate : 3 mm/s</string>
                </property>
               </widget>
              </item>
