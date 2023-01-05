@@ -3,7 +3,9 @@ import numpy as np
 from PyQt5 import QtCore
 
 class LineGraph:
-    def __init__(self):
+    def __init__(self, label_max, label_min):
+        self.label_max = label_max
+        self.label_min = label_min
         self.time_recorded  = np.array([0]) #koordinat sumbu x
         self.lines_1        = np.array([0])#sinus
         self.lines_2        = np.array([1]) #cosinus
@@ -36,20 +38,38 @@ class LineGraph:
         self.pen2 = pg.mkPen(color='r', width=2)
         self.pen3 = pg.mkPen(color='g', width=2)
         self.pen4 = pg.mkPen(color='b', width=2)
+        
+        # set up the timer to update the graph
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.graphUpdate)
     
+    # method to start the graph
+    def startGraph(self):
         #curve
         self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
         self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
         self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
         self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.pen4)
         
-        # update graph every 1 second
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.graphUpdate)
+        # start the timer to update the graph
         self.timer.start(self.duration)
-        
+    
+    # method to pause the graph
+    def pauseGraph(self):
+        # stop the timer to pause the graph
+        self.timer.stop()
+
+    # method to stop the graph
+    def stopGraph(self):
+        # clear the graph
+        self.plot_widget.clear()
+
     # method to update the graph
     def graphUpdate(self):
+        # update the max and min values labels
+        self.getMaxValue()
+        self.getMinValue()
+        
         # append new random number to the list
         self.time_recorded  = np.append(self.time_recorded, self.current_time)
         self.current_time   +=self.step
@@ -63,3 +83,11 @@ class LineGraph:
         self.curve2.setData(self.time_recorded, self.lines_2)
         self.curve3.setData(self.time_recorded, self.lines_3)
         self.curve_avg.setData(self.time_recorded, self.lines_avg)
+
+    # method to set a label to show the max value
+    def getMaxValue(self):
+        self.label_max.setText("Max : " + str(round(np.amax(self.lines_avg), 2)) + " mm")
+    
+    # method to set a label to show the min value
+    def getMinValue(self):
+        self.label_min.setText("Min : " +str(round(np.amin(self.lines_avg), 2))+ " mm")

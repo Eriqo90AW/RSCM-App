@@ -239,6 +239,9 @@ background-color: rgba(33, 43, 51, 100);
 QComboBox::down-arrow {
     color: black;
 }
+QComboBox {
+    text-align: center;
+}
 </string>
             </property>
             <property name="editable">
