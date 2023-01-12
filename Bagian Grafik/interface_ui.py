@@ -523,8 +523,8 @@ class Ui_MainWindow(object):
         self.label_graph_name.setText(_translate("MainWindow", "Name : Username"))
         self.label_graph_gender.setText(_translate("MainWindow", "Gender : Laki-laki"))
         self.label_graph_umur.setText(_translate("MainWindow", "Umur : 20"))
-        self.label_graph_max.setText(_translate("MainWindow", "Max : 100 mm"))
-        self.label_graph_min.setText(_translate("MainWindow", "Min : 2 mm"))
-        self.label_graph_avg.setText(_translate("MainWindow", "Average : 51 mm"))
-        self.label_graph_rate.setText(_translate("MainWindow", "Rate : 3 mm/s"))
+        self.label_graph_max.setText(_translate("MainWindow", "Max : 0 cm"))
+        self.label_graph_min.setText(_translate("MainWindow", "Min : 0 cm"))
+        self.label_graph_avg.setText(_translate("MainWindow", "Average : 0 cm"))
+        self.label_graph_rate.setText(_translate("MainWindow", "Rate : 0 cm/s"))
 import resources_rc

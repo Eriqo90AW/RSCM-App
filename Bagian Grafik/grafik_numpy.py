@@ -1,8 +1,10 @@
 import pyqtgraph as pg
 import numpy as np
 from PyQt5 import QtCore
+import threading
+import time
 
-class LineGraph:
+class Graph:
     def __init__(self, label_max, label_min):
         self.label_max = label_max
         self.label_min = label_min
@@ -24,7 +26,7 @@ class LineGraph:
         self.plot_widget.setBackground('w')
         self.plot_widget.setTitle(" ", color="#F59100", size="2pt")
         self.styles = {"color": "#F59100", "font-size": "10px"}
-        self.plot_widget.setLabel("left", "Range (mm)", **self.styles)
+        self.plot_widget.setLabel("left", "Range (cm)", **self.styles)
         self.plot_widget.setLabel("bottom", "Seconds (s)", **self.styles)
 
         # Set the y range of the plot
@@ -44,12 +46,15 @@ class LineGraph:
         self.timer.timeout.connect(self.graphUpdate)
     
     # method to start the graph
-    def startGraph(self):
+    def startGraph(self, graph_type):
+        self.graph_type = graph_type
         #curve
-        self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
-        self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
-        self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
-        self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.pen4)
+        if self.graph_type == 'main':
+            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
+            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
+            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
+        elif self.graph_type == 'average':
+            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.pen4)
         
         # start the timer to update the graph
         self.timer.start(self.duration)
@@ -72,22 +77,25 @@ class LineGraph:
         
         # append new random number to the list
         self.time_recorded  = np.append(self.time_recorded, self.current_time)
-        self.current_time   +=self.step
+        self.current_time   += self.step
+
         self.lines_1        =np.append(self.lines_1,    (np.sin(self.current_time))) #sinus
         self.lines_2        =np.append(self.lines_2,    (np.cos(self.current_time))) #cosinus
         self.lines_3        =np.append(self.lines_3,    np.absolute(np.sin(self.current_time)) ) # mutlak sinus
         self.lines_avg      =np.append(self.lines_avg,  (self.lines_1[-1]+self.lines_2[-1] +self.lines_3[-1])/3) #rata-rata
 
         # update the graph
-        self.curve1.setData(self.time_recorded, self.lines_1)
-        self.curve2.setData(self.time_recorded, self.lines_2)
-        self.curve3.setData(self.time_recorded, self.lines_3)
-        self.curve_avg.setData(self.time_recorded, self.lines_avg)
+        if self.graph_type == 'main':
+            self.curve1.setData(self.time_recorded, self.lines_1)
+            self.curve2.setData(self.time_recorded, self.lines_2)
+            self.curve3.setData(self.time_recorded, self.lines_3)
+        elif self.graph_type == 'average':
+            self.curve_avg.setData(self.time_recorded, self.lines_avg)
 
     # method to set a label to show the max value
     def getMaxValue(self):
-        self.label_max.setText("Max : " + str(round(np.amax(self.lines_avg), 2)) + " mm")
+        self.label_max.setText(f'Max : {round(np.amax(self.lines_avg), 2)} cm')
     
     # method to set a label to show the min value
     def getMinValue(self):
-        self.label_min.setText("Min : " +str(round(np.amin(self.lines_avg), 2))+ " mm")
+        self.label_min.setText(f'Min : {round(np.amin(self.lines_avg), 2)} cm')

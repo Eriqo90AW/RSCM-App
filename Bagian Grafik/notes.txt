@@ -1,0 +1,2 @@
+Tambahan:
+- informasi sensor warna berapa warna apa di main graph
