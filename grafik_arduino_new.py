@@ -28,17 +28,20 @@ def serial_arduino():
 
 class Graph():
     def __init__(self):
-        self.time_recorded  = [] #sumbu X
-        self.lines_1 = np.array([])
-        self.lines_2 = np.array([])
-        self.lines_3 = np.array([])
-        self.lines_4 = np.array([])
-        self.lines_5 = np.array([])
-        self.lines_6 =np.array([])
-        self.lines_avg =np.array([]) #rata-rata
-        self.current_time   = 0
-        #self.step           = 1 #0.0174533 # 1 derajat = 0.0174533 radian
-        self.duration       = round(1000) #1000 milisekon/frame per second
+        self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)
+        #---Inisiasi awal untuk sumbu Y-----
+        self.lines_1   = np.array([])
+        self.lines_2   = np.array([])
+        self.lines_3   = np.array([])
+        self.lines_4   = np.array([])
+        self.lines_5   = np.array([])
+        self.lines_6   = np.array([])
+        self.lines_avg = np.array([]) # rata-rata
+        #-------------------------------------
+        
+        self.current_time  = 0 # pegerakan awal sumbu X ( Waktu akan di increment pada "def waktu_sinyal()"" ) 
+        self.duration      = round(1000) #1000 milisekon/frame per second
+        #self.step         = 1 #0.0174533 # 1 derajat = 0.0174533 radian
 
         # Create a widget to hold the plot
         self.plot_widget = pg.PlotWidget()
@@ -57,13 +60,13 @@ class Graph():
         self.plot_widget.showGrid(x=True, y=True)
 
         # create a pen of different colors to use for the graph
-        self.pen1   = pg.mkPen(color='k', width=2)
-        self.pen2   = pg.mkPen(color='b', width=2)
-        self.pen3   = pg.mkPen(color='r', width=2)
-        self.pen4   = pg.mkPen(color='y', width=2)
-        self.pen5   = pg.mkPen(color='g', width=2)
-        self.pen6   = pg.mkPen(color='#34ebe8', width=2)
-        self.penavg = pg.mkPen(color='#eb34e1', width=4)
+        self.pen1   = pg.mkPen(color='k', width=2) #black
+        self.pen2   = pg.mkPen(color='b', width=2) #blue
+        self.pen3   = pg.mkPen(color='r', width=2) #red
+        self.pen4   = pg.mkPen(color='y', width=2) #yellow
+        self.pen5   = pg.mkPen(color='g', width=2) #green
+        self.pen6   = pg.mkPen(color='#34ebe8', width=2) #cyan
+        self.penavg = pg.mkPen(color='#eb34e1', width=4) #pink
 
         #dari class WorkerThread()
         self.worker=WorkerThread()
@@ -118,7 +121,7 @@ class Graph():
         # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
         self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
         
-        # dari dictionary 
+        # dari dictionary sensor 
         cache           =self.dic_sensor(sinyal) 
         self.lines_1    =cache["sensor1"]
         self.lines_2    =cache["sensor2"]
@@ -139,17 +142,18 @@ class Graph():
         elif self.graph_type == 'average':
             self.curve_avg.setData(self.time_recorded, self.lines_avg)
 
+
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
     def dic_sensor(self, sinyal):
         # total ada 9 sensor seharusnya
-       
-        sensor1 =np.append(self.lines_1, sinyal[0])
-        sensor2 =np.append(self.lines_2, sinyal[1])
-        sensor3 =np.append(self.lines_3, sinyal[2]) 
-        sensor4 =np.append(self.lines_4, sinyal[3]) 
-        sensor5 =np.append(self.lines_5, sinyal[4]) 
-        sensor6 =np.append(self.lines_6, sinyal[5])
-        sensoravg =np.append(self.lines_avg, round(np.average(sinyal[:]), 2) )
+        sensor1     =np.append(self.lines_1, sinyal[0])
+        sensor2     =np.append(self.lines_2, sinyal[1])
+        sensor3     =np.append(self.lines_3, sinyal[2]) 
+        sensor4     =np.append(self.lines_4, sinyal[3]) 
+        sensor5     =np.append(self.lines_5, sinyal[4]) 
+        sensor6     =np.append(self.lines_6, sinyal[5])
+        sensoravg   =np.append(self.lines_avg, round(np.average(sinyal[:]), 2) ) #average dua digit desimal
+        
         print("transfer sensor:",sinyal[:])
         
         cache={ "sensor1": sensor1, 
@@ -159,7 +163,6 @@ class Graph():
                 "sensor5": sensor5,
                 "sensor6": sensor6,
                 "sensoravg": sensoravg  }    
-        #print("rata-rata:",str(cache["sensoravg"]))
 
         return cache # dipasssingkan ke function graphUpdate
 
@@ -167,8 +170,8 @@ class Graph():
 # Threading Class
 class WorkerThread(QtCore.QThread):
 
-    update_sinyal = pyqtSignal(object) # mengirimkan array dari "emit()"
-    waktu=pyqtSignal(float)
+    update_sinyal = pyqtSignal(object) # mengirimkan self.array dari "emit()"
+    waktu=pyqtSignal(float) # mengirimkan delay dari "emit()"
     arduino_data=serial_arduino() # berasal dari function yang mencari COM PORT
 
   # Function which is executed by the thread (must be named 'run')
@@ -194,6 +197,6 @@ class WorkerThread(QtCore.QThread):
 
             d      = time.time() # waktu sesudah membaca arduino
             delay  = d-c # selisih waktu
-            print("thread detik:", delay)
             self.waktu.emit(delay) 
+            print("thread detik:", delay)
     
