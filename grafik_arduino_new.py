@@ -63,10 +63,10 @@ class Graph():
         self.pen1   = pg.mkPen(color='k', width=2) #black
         self.pen2   = pg.mkPen(color='b', width=2) #blue
         self.pen3   = pg.mkPen(color='r', width=2) #red
-        self.pen4   = pg.mkPen(color='y', width=2) #yellow
+        self.pen4   = pg.mkPen(color='#eb8934', width=2) #orange
         self.pen5   = pg.mkPen(color='g', width=2) #green
         self.pen6   = pg.mkPen(color='#34ebe8', width=2) #cyan
-        self.penavg = pg.mkPen(color='#eb34e1', width=4) #pink
+        self.penavg = pg.mkPen(color='#eb34e1', width=2) #pink
 
         #dari class WorkerThread()
         self.worker=WorkerThread()
@@ -93,6 +93,19 @@ class Graph():
             self.curve6     = self.plot_widget.plot(self.time_recorded, self.lines_6, pen=self.pen6)
         elif self.graph_type == 'average':
             self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.penavg)
+        elif self.graph_type == 'Sensor 1':
+            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
+        elif self.graph_type == 'Sensor 2':
+            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
+        elif self.graph_type == 'Sensor 3':
+            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
+        elif self.graph_type == 'Sensor 4':
+            self.curve4     = self.plot_widget.plot(self.time_recorded, self.lines_4, pen=self.pen4)
+        elif self.graph_type == 'Sensor 5':
+            self.curve5     = self.plot_widget.plot(self.time_recorded, self.lines_5, pen=self.pen5)
+        elif self.graph_type == 'Sensor 6':
+            self.curve6     = self.plot_widget.plot(self.time_recorded, self.lines_6, pen=self.pen6)
+
         
         # start the timer to update the graph
         #self.timer.start()
@@ -141,6 +154,18 @@ class Graph():
             self.curve6.setData(self.time_recorded, self.lines_6)
         elif self.graph_type == 'average':
             self.curve_avg.setData(self.time_recorded, self.lines_avg)
+        elif self.graph_type == 'Sensor 1':
+            self.curve1.setData(self.time_recorded, self.lines_1)
+        elif self.graph_type == 'Sensor 2':
+            self.curve2.setData(self.time_recorded, self.lines_2)
+        elif self.graph_type == 'Sensor 3':
+            self.curve3.setData(self.time_recorded, self.lines_3)
+        elif self.graph_type == 'Sensor 4':
+            self.curve4.setData(self.time_recorded, self.lines_4)
+        elif self.graph_type == 'Sensor 5':
+            self.curve5.setData(self.time_recorded, self.lines_5)
+        elif self.graph_type == 'Sensor 6':
+            self.curve6.setData(self.time_recorded, self.lines_6)
 
 
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
