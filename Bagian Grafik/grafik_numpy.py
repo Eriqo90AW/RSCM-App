@@ -40,24 +40,29 @@ class Graph:
         self.pen2 = pg.mkPen(color='r', width=2)
         self.pen3 = pg.mkPen(color='g', width=2)
         self.pen4 = pg.mkPen(color='b', width=2)
+
+        # add legend to the graph
+        self.plot_widget.addLegend()
         
         # set up the timer to update the graph
         self.timer = QtCore.QTimer()
+        self.timer.setInterval(self.duration)
         self.timer.timeout.connect(self.graphUpdate)
     
     # method to start the graph
     def startGraph(self, graph_type):
         self.graph_type = graph_type
-        #curve
+
+        # condition to check if the graph type is main or average
         if self.graph_type == 'main':
-            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
-            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
-            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
+            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, name="Sensor 1", pen=self.pen1)
+            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, name="Sensor 2", pen=self.pen2)
+            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, name="Sensor 3", pen=self.pen3)
         elif self.graph_type == 'average':
-            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.pen4)
+            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, name="Average", pen=self.pen4)
         
         # start the timer to update the graph
-        self.timer.start(self.duration)
+        self.timer.start()
     
     # method to pause the graph
     def pauseGraph(self):
@@ -68,6 +73,11 @@ class Graph:
     def stopGraph(self):
         # clear the graph
         self.plot_widget.clear()
+    
+    # method to save the graph
+    def saveGraph(self):
+        # save the graph
+        self.plot_widget.save('graph.png')
 
     # method to update the graph
     def graphUpdate(self):

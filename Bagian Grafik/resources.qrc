@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/login_background_2.jpg</file>
     <file>icons/engine-gears-icon.svg</file>
     <file>icons/gears-icon.svg</file>
     <file>icons/settings-gear-icon.svg</file>
