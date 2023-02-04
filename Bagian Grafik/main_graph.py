@@ -81,6 +81,6 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
-    window.setWindowTitle("Simple Graph")
+    window.setWindowTitle("Real-Time Graph")
     window.show()
     app.exec_()

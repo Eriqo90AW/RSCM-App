@@ -1,8 +1,15 @@
+import os
 import pyqtgraph as pg
 import numpy as np
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 import threading
 import time
+import datetime
+
+class CustomPlotWidget(pg.PlotWidget):
+    def save(self, file_name):
+        exporter = pg.exporters.ImageExporter(self.plotItem)
+        exporter.export(file_name)
 
 class Graph:
     def __init__(self, label_max, label_min):
@@ -77,7 +84,24 @@ class Graph:
     # method to save the graph
     def saveGraph(self):
         # save the graph
-        self.plot_widget.save('graph.png')
+        # Create a buffer to hold the image
+        buffer = QtGui.QImage(self.plot_widget.plotItem.scene().sceneRect().size().toSize(), QtGui.QImage.Format_ARGB32)
+        buffer.fill(0xffffffff)
+        painter = QtGui.QPainter(buffer)
+        self.plot_widget.plotItem.scene().render(painter)
+        painter.end()
+
+        # Get the current date and time
+        date = datetime.datetime.now().strftime("%Y-%m-%d_%I-%M %p")
+
+        # Get the user's home directory
+        home_dir = os.path.expanduser("~")
+
+        # Concatenate the home directory with the subfolder name
+        save_path = os.path.join(home_dir, "Documents", f"{date}_rscmgraph.png")
+
+        # Save the image to the specified path
+        buffer.save(save_path)
 
     # method to update the graph
     def graphUpdate(self):
