@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from interface_ui import *
 
 # import the LineGraph class from grafik_numpy.py
-from grafik_arduino_new import *
+from grafik_14_02 import *
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
