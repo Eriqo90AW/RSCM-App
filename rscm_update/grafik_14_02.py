@@ -9,22 +9,6 @@ import numpy as np
 from PyQt5.QtCore import * 
 from PyQt5.QtWidgets import *
 
-# Mendeteksi COM port  Arduino secara otomatis
-def serial_arduino():
-    coba_port=0 #dummy variabel untuk COM port
-    while True : 
-        try:
-            data_serial =serial.Serial('com%d'%coba_port, 115200) 
-            print("Tersambung pada COM PORT:", coba_port)
-            break #  berhenti ketika ketemu nomor com port yang benar
-        except:
-            coba_port +=1 #increment bila nomor com port tidak sesuai
-
-    time.sleep(1) # untuk loading 1 second agar tidak error
-    data_serial.flushInput() #default
-    data_serial.setDTR(True) #default
-    return data_serial # dipassingkan ke class WorkerThread
-
 
 class Graph():
     def __init__(self):
@@ -33,11 +17,11 @@ class Graph():
 
         #---Inisiasi awal untuk sumbu Y-----
     
-        self.lines_avg = np.array([]) # rata-rata
+        self.lines_avg = [] # rata-rata
         
-        self.sensor={"sensor1": np.array([]), "sensor2": np.array([]), "sensor3": np.array([]),
-         "sensor4": np.array([]), "sensor5": np.array([]), "sensor6":np.array([]), 
-         "sensor7": np.array([]),"sensor8": np.array([]), "sensor9": np.array([])}
+        self.sensor={"sensor1": [], "sensor2": [], "sensor3": [],
+         "sensor4": [], "sensor5": [], "sensor6":[], 
+         "sensor7": [],"sensor8": [], "sensor9": []}
         #------------------------------------------------------------------------
         
         self.current_time  = 0 # pegerakan awal sumbu X ( Waktu akan di increment pada "def waktu_sinyal()"" ) 
@@ -102,7 +86,7 @@ class Graph():
             #-----------------------------------
           
         elif self.graph_type == 'average':
-            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, name="Average", pen=self.penavg)
+            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, name="average", pen=self.penavg)
 
         # bila hanya salah satu sensor saja yang ditampilkan  
         else:
@@ -155,16 +139,30 @@ class Graph():
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
     def update_sensor(self, sinyal):
         self.banyak_sensor  = len(sinyal)
-        cache   ={}
-        self.lines_avg  =np.append(self.lines_avg, round(np.average(sinyal[:]), 2) ) #average dua digit desimal
+        self.lines_avg.append( round(np.average(sinyal[:]), 2) ) #average dua digit desimal
 
         for i in range(len(sinyal)):
-            self.sensor["sensor%d"%(i+1)]= np.append(self.sensor["sensor%d"%(i+1)] , sinyal[i]) # update tiap sensor (maksimal 9 sensor) 
-        
-        cache =self.sensor
-        cache.update({"sensoraverage": self.lines_avg})
-        return cache # supaya bisa diakes pada database
+           self.sensor["sensor%d"%(i+1)].append(sinyal[i]) # update tiap sensor (maksimal 9 sensor)
+
+    def array_sensor(self): # memudahkan memanggil array sensor  database
+        return self.sensor, self.lines_avg
   
+
+# Mendeteksi COM port  Arduino secara otomatis
+def serial_arduino():
+    coba_port=0 #dummy variabel untuk COM port
+    while True : 
+        try:
+            data_serial =serial.Serial('com%d'%coba_port, 115200) 
+            print("Tersambung pada COM PORT:", coba_port)
+            break #  berhenti ketika ketemu nomor com port yang benar
+        except:
+            coba_port +=1 #increment bila nomor com port tidak sesuai
+
+    time.sleep(1) # untuk loading 1 second agar tidak error
+    data_serial.flushInput() #default
+    data_serial.setDTR(True) #default
+    return data_serial # dipassingkan ke class WorkerThread
 
 # Threading Class
 class WorkerThread(QtCore.QThread):
@@ -191,7 +189,7 @@ class WorkerThread(QtCore.QThread):
             
             self.array  = list(map(int, split_data)) # mengubah array tipe string ke array bilangan
             #print("-----------------------------")
-            #print("thread sensor:",self.array)
+            print("thread sensor:",self.array)
             self.update_sinyal.emit(self.array) #mengirimkan sinyal
 
             delay  = round(time.time()-c, 3) # selisih waktu

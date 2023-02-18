@@ -84,6 +84,9 @@ class Graph():
         #-------------------------------------------------------
         self.curve={} # nanti curve di append ke sini
         #-------------
+        # add legend to the graph
+        self.plot_widget.addLegend()
+
         #dari class WorkerThread()
         self.worker=WorkerThread()
         self.worker.start()
@@ -94,46 +97,24 @@ class Graph():
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.graphUpdate) 
         self.timer.start(self.duration)
-
-
+    
     # method to start the graph
     def startGraph(self, graph_type):
         self.graph_type = graph_type
         #curve
         if self.graph_type == 'main':
             for i in range(1, 10):
-                self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.sensor["sensor%d"%i], pen=self.pen["pen%d"%i])} )
+                self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.sensor["sensor%d"%i],name="Sensor %d"%i, pen=self.pen["pen%d"%i])} )
             #-----------------------------------
           
         elif self.graph_type == 'average':
-            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.penavg)
+            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, name="Average", pen=self.penavg)
+
+        # bila hanya salah satu sensor saja yang ditampilkan  
         else:
             for i in range(1, 10):
                 if self.graph_type == 'Sensor %d'%i:
-                    self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.sensor["sensor%d"%i], pen=self.pen["pen%d"%i])} )
-        '''
-        elif self.graph_type == 'Sensor 1':
-            self.curve[0]     = self.plot_widget.plot(self.time_recorded, self.lines[0], pen=self.pen[0])
-        elif self.graph_type == 'Sensor 2':
-            self.curve[1]     = self.plot_widget.plot(self.time_recorded, self.lines[1], pen=self.pen[1])
-        elif self.graph_type == 'Sensor 3':
-            self.curve[2]     = self.plot_widget.plot(self.time_recorded, self.lines[2], pen=self.pen[2])
-        elif self.graph_type == 'Sensor 4':
-            self.curve[3]     = self.plot_widget.plot(self.time_recorded, self.lines[3], pen=self.pen[3])
-        elif self.graph_type == 'Sensor ':
-            self.curve[4]     = self.plot_widget.plot(self.time_recorded, self.lines[4], pen=self.pen[4])
-        elif self.graph_type == 'Sensor 6':
-            self.curve[5]     = self.plot_widget.plot(self.time_recorded, self.lines[5], pen=self.pen[5])
-        elif self.graph_type == 'Sensor 7':
-            self.curve[6]     = self.plot_widget.plot(self.time_recorded, self.lines[6], pen=self.pen[6])
-        elif self.graph_type == 'Sensor 8':
-            self.curve[7]     = self.plot_widget.plot(self.time_recorded, self.lines[7], pen=self.pen[7])
-        elif self.graph_type == 'Sensor 9':
-            self.curve[8]     = self.plot_widget.plot(self.time_recorded, self.lines[8], pen=self.pen[8])  '''
-    
-        # start the timer to update the graph
-        #self.timer.start()
-        #self.timer.setInterval(self.duration)
+                    self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.sensor["sensor%d"%i], name="Sensor %d"%i, pen=self.pen["pen%d"%i])} )
     
     # method to pause the graph
     def pauseGraph(self):
@@ -150,8 +131,9 @@ class Graph():
         # argument "waktu" berasal dari self.worker.waktu.connect()
         self.current_time +=waktu # delay arduino dijadikan pergerakan grafik sumbu 
         print("transfer detik:", waktu)
-
-    #@pyqtSlot(object)
+    def nilai_max(self):
+        a= np.max(self.sensor["sensor1"])
+        print("nilai max:", a)
 
     # Funtion untuk update grafik tiap waktu  
     def graphUpdate(self, sinyal):
@@ -160,92 +142,41 @@ class Graph():
         
         # dari dictionary sensor 
         cache           =self.dic_sensor(sinyal) 
-        for i in range(1, len(sinyal)+1):
-             self.sensor["sensor%d"%i]=cache["sensor%d" %i]
+        #for i in range(1, len(sinyal)+1):
+            #self.sensor["sensor%d"%i]=cache["sensor%d" %i]
 
-        self.lines_avg  =cache["sensoravg"]
+        #self.lines_avg  =cache["sensoravg"]
 
         # update the graph
         if self.graph_type  == 'main':
             for i in range(1, len(sinyal)+1):
                 self.curve["curve%d"%i].setData(self.time_recorded, self.sensor["sensor%d"%i])
 
-            ''''
-            self.curve1.setData(self.time_recorded, self.lines_1)
-            self.curve2.setData(self.time_recorded, self.lines_2)
-            self.curve3.setData(self.time_recorded, self.lines_3)
-            self.curve4.setData(self.time_recorded, self.lines_4)
-            self.curve5.setData(self.time_recorded, self.lines_5)
-            self.curve6.setData(self.time_recorded, self.lines_6)
-            self.curve7.setData(self.time_recorded, self.lines_7)
-            self.curve8.setData(self.time_recorded, self.lines_8)
-            self.curve9.setData(self.time_recorded, self.lines_9)'''
-
         elif self.graph_type == 'average':
             self.curve_avg.setData(self.time_recorded, self.lines_avg)
+
         else:
             for i in range(1, len(sinyal)+1):
                 if self.graph_type == 'Sensor %d'%i:
                     self.curve["curve%d"%i].setData(self.time_recorded, self.sensor["sensor%d"%i])
                     #print(i)
-        '''' 
-        elif self.graph_type == 'Sensor 1':
-            self.curve1.setData(self.time_recorded, self.lines_1)
-        elif self.graph_type == 'Sensor 2':
-            self.curve2.setData(self.time_recorded, self.lines_2)
-        elif self.graph_type == 'Sensor 3':
-            self.curve3.setData(self.time_recorded, self.lines_3)
-        elif self.graph_type == 'Sensor 4':
-            self.curve4.setData(self.time_recorded, self.lines_4)
-        elif self.graph_type == 'Sensor 5':
-            self.curve5.setData(self.time_recorded, self.lines_5)
-        elif self.graph_type == 'Sensor 6':
-            self.curve6.setData(self.time_recorded, self.lines_6)
-        elif self.graph_type == 'Sensor 7':
-            self.curve7.setData(self.time_recorded, self.lines_7)
-        elif self.graph_type == 'Sensor 8':
-            self.curve8.setData(self.time_recorded, self.lines_8)
-        elif self.graph_type == 'Sensor 9':
-            self.curve9.setData(self.time_recorded, self.lines_9)'''
-
-
+        self.nilai_max()
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
     def dic_sensor(self, sinyal):
         # total ada 9 sensor seharusnya
         cache ={}
         for i in range(len(sinyal)):
             cache.update({"sensor%d"%(i+1): np.append(self.sensor["sensor%d"%(i+1)] , sinyal[i])})
-            print(i)
+            self.sensor["sensor%d"%(i+1)]= np.append(self.sensor["sensor%d"%(i+1)] , sinyal[i])
+        print(cache)
 
-        ''''
-        sensor1     =np.append(self.sensor["sensor%d"%1] , sinyal[0])
-        sensor2     =np.append(self.sensor["sensor%d"%2], sinyal[1])
-        sensor3     =np.append(self.sensor["sensor%d"%3], sinyal[2]) 
-        sensor4     =np.append(self.sensor["sensor%d"%4], sinyal[3]) 
-        sensor5     =np.append(self.sensor["sensor%d"%5], sinyal[4]) 
-        sensor6     =np.append(self.sensor["sensor%d"%6], sinyal[5])
-        sensor7     =np.append(self.sensor["sensor%d"%7], sinyal[6])
-        sensor8     =np.append(self.sensor["sensor%d"%8], sinyal[7])
-        sensor9     =np.append(self.sensor["sensor%d"%9], sinyal[8])'''
-
-        sensoravg   =np.append(self.lines_avg, round(np.average(sinyal[:]), 2) ) #average dua digit desimal
-        cache.update({"sensoravg": sensoravg} )
-
-        #print("transfer sensor:",sinyal[:])
-        ''''
-        cache={ "sensor1": sensor1, 
-                "sensor2": sensor2,
-                "sensor3": sensor3, 
-                "sensor4": sensor4,
-                "sensor5": sensor5,
-                "sensor6": sensor6,
-                "sensor7": sensor7,
-                "sensor8": sensor8,
-                "sensor9": sensor9,
-                "sensoravg": sensoravg  } ''' 
-        #print(cache)
+        #sensoravg   =np.append(self.lines_avg, round(np.average(sinyal[:]), 2) ) #average dua digit desimal
+        #cache.update({"sensoravg": sensoravg} )
+        self.lines_avg  =np.append(self.lines_avg, round(np.average(sinyal[:]), 2) ) #average dua digit desimal
         return cache # dipasssingkan ke function graphUpdate
 
+ 
+        
 
 # Threading Class
 class WorkerThread(QtCore.QThread):
@@ -259,9 +190,8 @@ class WorkerThread(QtCore.QThread):
         print("thread started")
         # Reading data from serial port
         while True: # default
-
           if self.arduino_data.inWaiting: # default
-            c     = round(time.time(),3)# waktu sebelum mulai
+            c     = time.time()# waktu sebelum mulai
             data_paket  = self.arduino_data.readline() # membaca output arduino
             #b' = bytes ;\r\n =newline berasal dari println
 
@@ -272,12 +202,11 @@ class WorkerThread(QtCore.QThread):
             split_data  = data_paket.split(" ") # pemisah antar bilangan dengan spasi
             
             self.array  = list(map(int, split_data)) # mengubah array tipe string ke array bilangan
-            print("-----------------------------")
+            #print("-----------------------------")
             #print("thread sensor:",self.array)
             self.update_sinyal.emit(self.array) #mengirimkan sinyal
 
-            d      = round(time.time(), 3) # waktu sesudah membaca arduino
-            delay  = round(d-c, 3) # selisih waktu
+            delay  = round(time.time()-c, 3) # selisih waktu
             self.waktu.emit(delay) 
             #print("thread detik:", delay)
     

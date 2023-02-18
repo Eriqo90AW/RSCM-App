@@ -1,6 +1,6 @@
 import pyqtgraph as pg
 import numpy as np
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 import serial.tools.list_ports
 import time
 import serial
@@ -53,7 +53,7 @@ class Graph():
         self.plot_widget.setBackground('w')
         self.plot_widget.setTitle(" ", color="#F59100", size="2pt")
         self.styles = {"color": "#F59100", "font-size": "10px"}
-        self.plot_widget.setLabel("left", "Range (cm)", **self.styles)
+        self.plot_widget.setLabel("left", "Range (mm)", **self.styles)
         self.plot_widget.setLabel("bottom", "Seconds (s)", **self.styles)
 
         # Set the y range of the plot
@@ -73,7 +73,7 @@ class Graph():
         self.pen8   = pg.mkPen(color='#ebd234', width=2) #kuning
         self.pen9   = pg.mkPen(color='#baeb34', width=2) #lime
         self.penavg = pg.mkPen(color='#eb34e1', width=2) #pink
-
+        self.plot_widget.addLegend()
         #dari class WorkerThread()
         self.worker=WorkerThread()
         self.worker.start()
@@ -91,35 +91,35 @@ class Graph():
         self.graph_type = graph_type
         #curve
         if self.graph_type == 'main':
-            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
-            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
-            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
-            self.curve4     = self.plot_widget.plot(self.time_recorded, self.lines_4, pen=self.pen4)
-            self.curve5     = self.plot_widget.plot(self.time_recorded, self.lines_5, pen=self.pen5)
-            self.curve6     = self.plot_widget.plot(self.time_recorded, self.lines_6, pen=self.pen6)
-            self.curve7     = self.plot_widget.plot(self.time_recorded, self.lines_7, pen=self.pen7)
-            self.curve8     = self.plot_widget.plot(self.time_recorded, self.lines_8, pen=self.pen8)
-            self.curve9     = self.plot_widget.plot(self.time_recorded, self.lines_9, pen=self.pen9)
+            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1,name="Sensor 1", pen=self.pen1)
+            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2,name="Sensor 2", pen=self.pen2)
+            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3,name="Sensor 3", pen=self.pen3)
+            self.curve4     = self.plot_widget.plot(self.time_recorded, self.lines_4,name="Sensor 4", pen=self.pen4)
+            self.curve5     = self.plot_widget.plot(self.time_recorded, self.lines_5, name="Sensor 5", pen=self.pen5)
+            self.curve6     = self.plot_widget.plot(self.time_recorded, self.lines_6, name="Sensor 6", pen=self.pen6)
+            self.curve7     = self.plot_widget.plot(self.time_recorded, self.lines_7, name="Sensor 7", pen=self.pen7)
+            self.curve8     = self.plot_widget.plot(self.time_recorded, self.lines_8,name="Sensor 8", pen=self.pen8)
+            self.curve9     = self.plot_widget.plot(self.time_recorded, self.lines_9,name="Sensor 9", pen=self.pen9)
         elif self.graph_type == 'average':
-            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg, pen=self.penavg)
+            self.curve_avg  = self.plot_widget.plot(self.time_recorded, self.lines_avg,name="Average", pen=self.penavg)
         elif self.graph_type == 'Sensor 1':
-            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1, pen=self.pen1)
+            self.curve1     = self.plot_widget.plot(self.time_recorded, self.lines_1,name="Sensor 1", pen=self.pen1)
         elif self.graph_type == 'Sensor 2':
-            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2, pen=self.pen2)
+            self.curve2     = self.plot_widget.plot(self.time_recorded, self.lines_2,name="Sensor 2", pen=self.pen2)
         elif self.graph_type == 'Sensor 3':
-            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3, pen=self.pen3)
+            self.curve3     = self.plot_widget.plot(self.time_recorded, self.lines_3,name="Sensor 3", pen=self.pen3)
         elif self.graph_type == 'Sensor 4':
-            self.curve4     = self.plot_widget.plot(self.time_recorded, self.lines_4, pen=self.pen4)
+            self.curve4     = self.plot_widget.plot(self.time_recorded, self.lines_4, name="Sensor 4",pen=self.pen4)
         elif self.graph_type == 'Sensor 5':
-            self.curve5     = self.plot_widget.plot(self.time_recorded, self.lines_5, pen=self.pen5)
+            self.curve5     = self.plot_widget.plot(self.time_recorded, self.lines_5,name="Sensor 5", pen=self.pen5)
         elif self.graph_type == 'Sensor 6':
-            self.curve6     = self.plot_widget.plot(self.time_recorded, self.lines_6, pen=self.pen6)
+            self.curve6     = self.plot_widget.plot(self.time_recorded, self.lines_6, name="Sensor 6", pen=self.pen6)
         elif self.graph_type == 'Sensor 7':
-            self.curve7     = self.plot_widget.plot(self.time_recorded, self.lines_7, pen=self.pen7)
+            self.curve7     = self.plot_widget.plot(self.time_recorded, self.lines_7,name="Sensor 7", pen=self.pen7)
         elif self.graph_type == 'Sensor 8':
-            self.curve8     = self.plot_widget.plot(self.time_recorded, self.lines_8, pen=self.pen8)
+            self.curve8     = self.plot_widget.plot(self.time_recorded, self.lines_8,name="Sensor 8", pen=self.pen8)
         elif self.graph_type == 'Sensor 9':
-            self.curve9     = self.plot_widget.plot(self.time_recorded, self.lines_9, pen=self.pen9)    
+            self.curve9     = self.plot_widget.plot(self.time_recorded, self.lines_9,name="Sensor 9", pen=self.pen9)    
 
         
         # start the timer to update the graph
@@ -245,8 +245,8 @@ class WorkerThread(QtCore.QThread):
 
             data_paket  = data_paket.decode("utf-8").strip('\r\n')  # agar menghilangkan dummy simbol
             #data_paket  = data_paket.replace(":", '')
-            data_paket  = data_paket.replace("Out of range", '500') # out of range diganti dengan 500
-            data_paket  = data_paket.replace("8191", '500') 
+            data_paket  = data_paket.replace("Out of range", '1200') # out of range diganti dengan 500
+            data_paket  = data_paket.replace("8191", '1200') 
             split_data  = data_paket.split(" ") # pemisah antar bilangan dengan spasi
             
             self.array  = list(map(int, split_data)) # mengubah array tipe string ke array bilangan

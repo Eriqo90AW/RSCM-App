@@ -1,3 +1,4 @@
-curve1=[]
-curve"%d",%1.append(2)
-print(curve"%d",1)
+import time
+import numpy as np
+dic ={"a": [1,2,3,4]}
+print(dic["a"][0])

@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
 
         # Initial graph setup
         self.mainGraphInit()
-        self.startButton()
+        #self.stopButton()
 
         # Connect the buttons to the methods
         self.initButtons()
@@ -35,7 +35,6 @@ class MainWindow(QMainWindow):
     def initButtons(self):
         self.ui.button_graph_start.clicked.connect(lambda: self.startButton())
         self.ui.button_graph_stop.clicked.connect(lambda: self.stopButton())
-
         self.ui.button_graph_main.clicked.connect(lambda: self.mainGraphInit())
         self.ui.button_graph_average.clicked.connect(lambda: self.averageGraphInit())
         self.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
@@ -44,24 +43,24 @@ class MainWindow(QMainWindow):
         self.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
         self.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
         self.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
-        #self.ui.button_graph_sensor1.clicked.connect(lambda: self.sensor1())
 
     # method to start and pause the graph
     def startButton(self):
-        if not self.paused:
+        if self.paused:
+            self.graph.stopGraph()
             self.graph.startGraph(self.currentGraph)
             self.ui.button_graph_start.setText("Pause")
-            self.paused = True
-        elif self.paused:
+            self.paused =  False
+        elif self.paused == False:
             self.graph.pauseGraph()
             self.ui.button_graph_start.setText("Start")
-            self.paused = False
+            self.paused = True
     
     #method to stop and reset the graph
     def stopButton(self):
         self.graph.pauseGraph()
         self.ui.button_graph_start.setText("Start")
-        self.paused = False
+        self.paused = True
         self.graph.stopGraph()
     
     def mainGraphInit(self):
