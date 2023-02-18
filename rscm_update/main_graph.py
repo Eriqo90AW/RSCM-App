@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow
-
+import sys
 # import interface ui file
 from interface_ui import *
 
 # import the LineGraph class from grafik_numpy.py
-from grafik_14_02 import *
+from grafik_18_02 import *
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -28,11 +28,15 @@ class MainWindow(QMainWindow):
         # Connect the buttons to the methods
         self.initButtons()
 
+        # Connect the closeEvent signal to the closewindow method
+        self.closeEvent = self.closewindow # dari def closewindow(self, event):
+
         # Show the widget
         self.show()
 
     # method to connect the buttons to the methods
     def initButtons(self):
+        self.ui.button_graph_save.clicked.connect(lambda: self.saveButton())
         self.ui.button_graph_start.clicked.connect(lambda: self.startButton())
         self.ui.button_graph_stop.clicked.connect(lambda: self.stopButton())
         self.ui.button_graph_main.clicked.connect(lambda: self.mainGraphInit())
@@ -63,6 +67,10 @@ class MainWindow(QMainWindow):
         self.paused = True
         self.graph.stopGraph()
     
+    def saveButton(self):
+        self.graph.saveGraph()
+        self.ui.button_graph_save.setText("Save")
+    
     def mainGraphInit(self):
         self.currentGraph = "main"
         self.graph.stopGraph()
@@ -88,9 +96,33 @@ class MainWindow(QMainWindow):
         self.ui.button_graph_average.setStyleSheet("")
 
 
+    #function nyoba ketika program ditutup
+    def closewindow(self, event):
+        #mengambil nilai dari def array_sensor(self) pada class Graph
+        seluruh_sensor, average= self.graph.array_sensor() 
+        #for i in range(1,len(seluruh_sensor)+1):
+            #seluruh_sensor["sensor%d"%i] =np.asarray(seluruh_sensor["sensor%d"%i])
+       # average=np.asarray(average)
+
+        print("\nrata-rata:", average, "\n")
+        print("size rata-rata: ",average.__sizeof__()," bytes\n")
+
+        for i in range(1,len(seluruh_sensor)+1):
+            print("sensor%d:"%i, seluruh_sensor["sensor%d"%i])
+            print("sensor%d:"%i, seluruh_sensor["sensor%d"%i].__sizeof__(),"bytes\n")
+        # simpan seluruh sensor
+          #  with open("simpan1.txt","a") as f:
+               # np.savetxt(f, (seluruh_sensor["sensor%d"%i], ), fmt="%d", delimiter=',', header="sensor%d: "%i) 
+        # simpan average array
+       # with open("simpan1.txt","a") as f:
+           # np.savetxt(f, (average, ), fmt="%d", delimiter=',', header="average: ") # simpan average array
+                
+        # Call the default implementation of the closeEvent to actually close the window
+        super().closeEvent(event)
+
 if __name__ == "__main__":
-    app = QApplication([])
+    app = QApplication(sys.argv)
     window = MainWindow()
     window.setWindowTitle("Simple Graph")
     window.show()
-    app.exec_()
+    sys.exit(app.exec_())

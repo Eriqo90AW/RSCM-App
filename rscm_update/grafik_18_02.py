@@ -103,6 +103,20 @@ class Graph():
     def stopGraph(self):
         # clear the graph
         self.plot_widget.clear()
+    
+    def saveGraph(self):
+        seluruh_sensor, average= self.sensor, self.lines_avg
+       # for i in range(1,len(seluruh_sensor)+1):
+           # seluruh_sensor["sensor%d"%i] =np.asarray(seluruh_sensor["sensor%d"%i])
+        #average=np.asarray(average)
+
+        for i in range(1,len(seluruh_sensor)+1):
+        # simpan seluruh sensor
+            with open("simpan1.txt","a") as f:
+                np.savetxt(f, (seluruh_sensor["sensor%d"%i], ), fmt="%d", delimiter=',', header="sensor%d: "%i) 
+        # simpan average array
+        with open("simpan1.txt","a") as f:
+            np.savetxt(f, (average, ), fmt="%d", delimiter=',', header="average: ") # simpan average array '''
 
     # function untuk update waktu terbaru
     def waktu_sinyal(self, waktu): 
@@ -121,7 +135,7 @@ class Graph():
         # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
         self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
         self.update_sensor(sinyal) #agar array sensor tetap ter-update
-        self.min_max()
+        #self.min_max()
 
         # update the graph
         if self.graph_type  == 'main':
@@ -139,10 +153,11 @@ class Graph():
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
     def update_sensor(self, sinyal):
         self.banyak_sensor  = len(sinyal)
-        self.lines_avg.append( round(np.average(sinyal[:]), 2) ) #average dua digit desimal
+        self.lines_avg.append( round(np.average(sinyal)) ) #average dua digit desimal
 
         for i in range(len(sinyal)):
            self.sensor["sensor%d"%(i+1)].append(sinyal[i]) # update tiap sensor (maksimal 9 sensor)
+        print(sinyal)
 
     def array_sensor(self): # memudahkan memanggil array sensor  database
         return self.sensor, self.lines_avg
@@ -189,7 +204,6 @@ class WorkerThread(QtCore.QThread):
             
             self.array  = list(map(int, split_data)) # mengubah array tipe string ke array bilangan
             #print("-----------------------------")
-            print("thread sensor:",self.array)
             self.update_sinyal.emit(self.array) #mengirimkan sinyal
 
             delay  = round(time.time()-c, 3) # selisih waktu

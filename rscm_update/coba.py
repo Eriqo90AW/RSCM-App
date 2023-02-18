@@ -1,4 +1,4 @@
-import time
-import numpy as np
-dic ={"a": [1,2,3,4]}
-print(dic["a"][0])
+class MyClass:
+    def my_function(self):
+        print("Hello World!")
+        return 42
