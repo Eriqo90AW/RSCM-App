@@ -2,8 +2,6 @@ import os
 import pyqtgraph as pg
 import numpy as np
 from PyQt5 import QtCore, QtGui
-import threading
-import time
 import datetime
 
 class CustomPlotWidget(pg.PlotWidget):
@@ -70,6 +68,10 @@ class Graph:
         
         # start the timer to update the graph
         self.timer.start()
+        
+        # update the max and min values labels
+        self.getMaxValue()
+
     
     # method to pause the graph
     def pauseGraph(self):
@@ -98,8 +100,9 @@ class Graph:
         home_dir = os.path.expanduser("~")
 
         # Concatenate the home directory with the subfolder name
-        save_path = os.path.join(home_dir, "Documents", f"{date}_rscmgraph.png")
+        save_path = f"{date}_rscmgraph.png"
 
+        print(save_path)
         # Save the image to the specified path
         buffer.save(save_path)
 
