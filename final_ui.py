@@ -9,14 +9,13 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
-
+from ui.database import ui_database
+from ui.signup import ui_signup
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 800)
-        MainWindow.setWindowFlag(Qt.FramelessWindowHint)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("*\n"
 "{\n"
@@ -46,7 +45,7 @@ class Ui_MainWindow(object):
 "/*DataBase Window*/\n"
 "QTableWidget{\n"
 "    background-color: rgba(0,0,0,100);\n"
-"    alternate-background-color: rgba(75, 105, 117, 100);\n"
+"    alternate-background-color: rgb(75, 105, 117, 100);\n"
 "}\n"
 "QTableWidget::item:selected{\n"
 "    background-color: rgba(139, 193, 212, 100);\n"
@@ -153,6 +152,7 @@ class Ui_MainWindow(object):
         self.label_login_menu = QtWidgets.QLabel(self.frame_login_menu)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_login_menu.setFont(font)
         self.label_login_menu.setObjectName("label_login_menu")
         self.horizontalLayout_47.addWidget(self.label_login_menu)
@@ -162,6 +162,7 @@ class Ui_MainWindow(object):
         self.frame_login_dash.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.frame_login_dash.setFont(font)
         self.frame_login_dash.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_login_dash.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -171,6 +172,7 @@ class Ui_MainWindow(object):
         self.label_login_dash = QtWidgets.QLabel(self.frame_login_dash)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_login_dash.setFont(font)
         self.label_login_dash.setAlignment(QtCore.Qt.AlignCenter)
         self.label_login_dash.setObjectName("label_login_dash")
@@ -225,6 +227,8 @@ class Ui_MainWindow(object):
         self.frame_stacked.setObjectName("frame_stacked")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.frame_stacked)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+
+
         self.stackedWidget = QtWidgets.QStackedWidget(self.frame_stacked)
         self.stackedWidget.setStyleSheet("background-color: rgba(0, 0, 0, 0);")
         self.stackedWidget.setObjectName("stackedWidget")
@@ -272,6 +276,7 @@ class Ui_MainWindow(object):
         self.label_home_main = QtWidgets.QLabel(self.frame_home_label)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_home_main.setFont(font)
         self.label_home_main.setAlignment(QtCore.Qt.AlignCenter)
         self.label_home_main.setObjectName("label_home_main")
@@ -378,6 +383,7 @@ class Ui_MainWindow(object):
         self.label_login_main = QtWidgets.QLabel(self.frame_login_label)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_login_main.setFont(font)
         self.label_login_main.setObjectName("label_login_main")
         self.verticalLayout_5.addWidget(self.label_login_main, 0, QtCore.Qt.AlignHCenter)
@@ -426,337 +432,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.frame_login_bregister, 0, QtCore.Qt.AlignTop)
         self.horizontalLayout_12.addWidget(self.frame_login_main)
         self.stackedWidget.addWidget(self.login_page)
-        self.register_page = QtWidgets.QWidget()
-        self.register_page.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.register_page.setStyleSheet("#label_create_main\n"
-"{\n"
-"    font-size: 25px;\n"
-"}\n"
-"\n"
-"#frame_register_main\n"
-"{\n"
-"    border-top-left-radius: 20px;\n"
-"    border-bottom-right-radius: 20px;\n"
-"    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(50, 150,200, 235), stop:1 rgba(235, 255, 255, 155));\n"
-"}\n"
-"\n"
-"#edit_signup_id\n"
-"{\n"
-"    border:none;\n"
-"    border-bottom:2px solid rgba(255, 255, 255, 155);\n"
-"    color:rgba(50,50,50,250);\n"
-"    padding-bottom:7px;\n"
-"}\n"
-"\n"
-"#edit_signup_nama\n"
-"{\n"
-"    border:none;\n"
-"    border-bottom:2px solid rgba(255, 255, 255, 155);\n"
-"    color:rgba(50,50,50,250);\n"
-"    padding-bottom:7px;\n"
-"}\n"
-"\n"
-"#edit_signup_umur\n"
-"{\n"
-"    border:none;\n"
-"    border-bottom:2px solid rgba(255, 255, 255, 155);\n"
-"    color:rgba(50,50,50,250);\n"
-"    padding-bottom:7px;\n"
-"}\n"
-"\n"
-"#frame_signup_button QPushButton{\n"
-"padding: 10px;\n"
-"border-radius: 5px;\n"
-"background-color: rgba(33, 43, 51, 100);\n"
-"}\n"
-"\n"
-"\n"
-"#frame_signup_button QPushButton:hover\n"
-"{\n"
-"    border-radius: 10px;\n"
-"    background-color: rgb(120, 157, 186);\n"
-"}\n"
-"\n"
-"#frame_signup_combobox QComboBox{\n"
-"    background-color: rgba(255, 255, 255, 0);\n"
-"}\n"
-"#frame_signup_combobox QComboBox QAbstractItemView{\n"
-"    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(50, 150,200, 235), stop:1 rgba(235, 255, 255, 155));\n"
-"}")
-        self.register_page.setObjectName("register_page")
-        self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.register_page)
-        self.horizontalLayout_11.setContentsMargins(11, -1, 11, -1)
-        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.frame_register_main = QtWidgets.QFrame(self.register_page)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frame_register_main.sizePolicy().hasHeightForWidth())
-        self.frame_register_main.setSizePolicy(sizePolicy)
-        self.frame_register_main.setMaximumSize(QtCore.QSize(400, 500))
-        self.frame_register_main.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.frame_register_main.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_register_main.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_register_main.setObjectName("frame_register_main")
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.frame_register_main)
-        self.verticalLayout_7.setContentsMargins(25, -1, 25, -1)
-        self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.frame_create = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_create.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_create.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_create.setObjectName("frame_create")
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.frame_create)
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.label_create_main = QtWidgets.QLabel(self.frame_create)
-        font = QtGui.QFont()
-        font.setFamily("Trebuchet MS")
-        self.label_create_main.setFont(font)
-        self.label_create_main.setObjectName("label_create_main")
-        self.horizontalLayout_5.addWidget(self.label_create_main)
-        self.verticalLayout_7.addWidget(self.frame_create, 0, QtCore.Qt.AlignHCenter)
-        self.frame_signup_id = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_signup_id.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_signup_id.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_signup_id.setObjectName("frame_signup_id")
-        self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.frame_signup_id)
-        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.edit_signup_id = QtWidgets.QLineEdit(self.frame_signup_id)
-        self.edit_signup_id.setObjectName("edit_signup_id")
-        self.horizontalLayout_10.addWidget(self.edit_signup_id)
-        self.verticalLayout_7.addWidget(self.frame_signup_id)
-        self.frame_signup_nama = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_signup_nama.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_signup_nama.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_signup_nama.setObjectName("frame_signup_nama")
-        self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.frame_signup_nama)
-        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
-        self.edit_signup_nama = QtWidgets.QLineEdit(self.frame_signup_nama)
-        self.edit_signup_nama.setObjectName("edit_signup_nama")
-        self.horizontalLayout_9.addWidget(self.edit_signup_nama)
-        self.verticalLayout_7.addWidget(self.frame_signup_nama)
-        self.frame_signup_umur = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_signup_umur.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_signup_umur.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_signup_umur.setObjectName("frame_signup_umur")
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.frame_signup_umur)
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.edit_signup_umur = QtWidgets.QLineEdit(self.frame_signup_umur)
-        self.edit_signup_umur.setObjectName("edit_signup_umur")
-        self.horizontalLayout_8.addWidget(self.edit_signup_umur)
-        self.verticalLayout_7.addWidget(self.frame_signup_umur)
-        self.frame_signup_label = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_signup_label.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_signup_label.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_signup_label.setObjectName("frame_signup_label")
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.frame_signup_label)
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.label_gender = QtWidgets.QLabel(self.frame_signup_label)
-        self.label_gender.setObjectName("label_gender")
-        self.horizontalLayout_6.addWidget(self.label_gender)
-        self.verticalLayout_7.addWidget(self.frame_signup_label)
-        self.frame_signup_combobox = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_signup_combobox.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_signup_combobox.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_signup_combobox.setObjectName("frame_signup_combobox")
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.frame_signup_combobox)
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.combobox_signup_gender = QtWidgets.QComboBox(self.frame_signup_combobox)
-        self.combobox_signup_gender.setObjectName("combobox_signup_gender")
-        self.combobox_signup_gender.addItem("")
-        self.combobox_signup_gender.addItem("")
-        self.horizontalLayout_7.addWidget(self.combobox_signup_gender)
-        self.verticalLayout_7.addWidget(self.frame_signup_combobox)
-        self.frame_signup_button = QtWidgets.QFrame(self.frame_register_main)
-        self.frame_signup_button.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_signup_button.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_signup_button.setObjectName("frame_signup_button")
-        self.horizontalLayout_13 = QtWidgets.QHBoxLayout(self.frame_signup_button)
-        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        self.button_signup_sign = QtWidgets.QPushButton(self.frame_signup_button)
-        self.button_signup_sign.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.button_signup_sign.setObjectName("button_signup_sign")
-        self.horizontalLayout_13.addWidget(self.button_signup_sign)
-        self.verticalLayout_7.addWidget(self.frame_signup_button)
-        self.horizontalLayout_11.addWidget(self.frame_register_main)
+
+        self.register_page = ui_signup(self.stackedWidget)
         self.stackedWidget.addWidget(self.register_page)
-        self.database_page = QtWidgets.QWidget()
-        self.database_page.setStyleSheet("#frame_database_menu\n"
-"{\n"
-"    border-radius: 10px;\n"
-"    /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(50, 150,200, 235), stop:1 rgba(235, 255, 255, 155));*/\n"
-"}\n"
-"\n"
-"#edit_database_id\n"
-"{\n"
-"    background-color: white;\n"
-"}\n"
-"\n"
-"#edit_database_nama\n"
-"{\n"
-"    background-color: white;\n"
-"}\n"
-"\n"
-"#frame_button_back QPushButton{\n"
-"padding: 5px;\n"
-"border-radius: 5px;\n"
-"background-color: rgba(33, 43, 51, 100);\n"
-"}\n"
-"#frame_button_back QPushButton:hover\n"
-"{\n"
-"border-radius: 10px;\n"
-"background-color: rgb(120, 157, 186);\n"
-"}\n"
-"\n"
-"#frame_button_delete QPushButton{\n"
-"padding: 5px;\n"
-"border-radius: 5px;\n"
-"background-color: rgba(33, 43, 51, 100);\n"
-"}\n"
-"#frame_button_delete QPushButton:hover\n"
-"{\n"
-"border-radius: 10px;\n"
-"background-color: rgb(120, 157, 186);\n"
-"}\n"
-"")
-        self.database_page.setObjectName("database_page")
-        self.horizontalLayout_14 = QtWidgets.QHBoxLayout(self.database_page)
-        self.horizontalLayout_14.setObjectName("horizontalLayout_14")
-        self.frame_table = QtWidgets.QFrame(self.database_page)
-        self.frame_table.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_table.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_table.setObjectName("frame_table")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.frame_table)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.table_database_data = QtWidgets.QTableWidget(self.frame_table)
-        self.table_database_data.setFrameShape(QtWidgets.QFrame.VLine)
-        self.table_database_data.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.table_database_data.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.table_database_data.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.table_database_data.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
-        self.table_database_data.setAutoScroll(True)
-        self.table_database_data.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.table_database_data.setAlternatingRowColors(True)
-        self.table_database_data.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.table_database_data.setTextElideMode(QtCore.Qt.ElideLeft)
-        self.table_database_data.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
-        self.table_database_data.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
-        self.table_database_data.setRowCount(4)
-        self.table_database_data.setObjectName("table_database_data")
-        self.table_database_data.setColumnCount(5)
-        item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignCenter)
-        self.table_database_data.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_database_data.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_database_data.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_database_data.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.table_database_data.setHorizontalHeaderItem(4, item)
-        self.table_database_data.horizontalHeader().setCascadingSectionResizes(False)
-        self.table_database_data.horizontalHeader().setMinimumSectionSize(39)
-        self.table_database_data.horizontalHeader().setSortIndicatorShown(True)
-        self.table_database_data.horizontalHeader().setStretchLastSection(True)
-        self.table_database_data.verticalHeader().setVisible(False)
-        self.table_database_data.verticalHeader().setCascadingSectionResizes(False)
-        self.table_database_data.verticalHeader().setSortIndicatorShown(False)
-        self.table_database_data.setColumnWidth(3, 200)
-        self.verticalLayout_3.addWidget(self.table_database_data)
-        self.frame_database_menu = QtWidgets.QFrame(self.frame_table)
-        self.frame_database_menu.setMinimumSize(QtCore.QSize(0, 50))
-        self.frame_database_menu.setMaximumSize(QtCore.QSize(16777215, 150))
-        self.frame_database_menu.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_database_menu.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_database_menu.setObjectName("frame_database_menu")
-        self.horizontalLayout_15 = QtWidgets.QHBoxLayout(self.frame_database_menu)
-        self.horizontalLayout_15.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_15.setSpacing(11)
-        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
-        self.frame_database_left = QtWidgets.QFrame(self.frame_database_menu)
-        self.frame_database_left.setMaximumSize(QtCore.QSize(250, 16777215))
-        self.frame_database_left.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_database_left.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_database_left.setObjectName("frame_database_left")
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.frame_database_left)
-        self.verticalLayout_6.setContentsMargins(0, 11, 0, 11)
-        self.verticalLayout_6.setSpacing(7)
-        self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.frame_database_id = QtWidgets.QFrame(self.frame_database_left)
-        self.frame_database_id.setMinimumSize(QtCore.QSize(0, 10))
-        self.frame_database_id.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_database_id.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_database_id.setObjectName("frame_database_id")
-        self.horizontalLayout_16 = QtWidgets.QHBoxLayout(self.frame_database_id)
-        self.horizontalLayout_16.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_16.setSpacing(7)
-        self.horizontalLayout_16.setObjectName("horizontalLayout_16")
-        self.label_database_id = QtWidgets.QLabel(self.frame_database_id)
-        self.label_database_id.setObjectName("label_database_id")
-        self.horizontalLayout_16.addWidget(self.label_database_id)
-        self.edit_database_id = QtWidgets.QLineEdit(self.frame_database_id)
-        self.edit_database_id.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.edit_database_id.setObjectName("edit_database_id")
-        self.horizontalLayout_16.addWidget(self.edit_database_id)
-        self.verticalLayout_6.addWidget(self.frame_database_id)
-        self.frame_button_back = QtWidgets.QFrame(self.frame_database_left)
-        self.frame_button_back.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_button_back.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_button_back.setObjectName("frame_button_back")
-        self.horizontalLayout_17 = QtWidgets.QHBoxLayout(self.frame_button_back)
-        self.horizontalLayout_17.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_17.setSpacing(0)
-        self.horizontalLayout_17.setObjectName("horizontalLayout_17")
-        self.button_database_back = QtWidgets.QPushButton(self.frame_button_back)
-        self.button_database_back.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.button_database_back.setObjectName("button_database_back")
-        self.horizontalLayout_17.addWidget(self.button_database_back)
-        self.verticalLayout_6.addWidget(self.frame_button_back)
-        self.horizontalLayout_15.addWidget(self.frame_database_left)
-        self.frame_database_right = QtWidgets.QFrame(self.frame_database_menu)
-        self.frame_database_right.setMaximumSize(QtCore.QSize(250, 16777215))
-        self.frame_database_right.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_database_right.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_database_right.setObjectName("frame_database_right")
-        self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.frame_database_right)
-        self.verticalLayout_8.setContentsMargins(0, 11, 0, 11)
-        self.verticalLayout_8.setSpacing(7)
-        self.verticalLayout_8.setObjectName("verticalLayout_8")
-        self.frame_database_nama = QtWidgets.QFrame(self.frame_database_right)
-        self.frame_database_nama.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_database_nama.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_database_nama.setObjectName("frame_database_nama")
-        self.horizontalLayout_18 = QtWidgets.QHBoxLayout(self.frame_database_nama)
-        self.horizontalLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_18.setSpacing(7)
-        self.horizontalLayout_18.setObjectName("horizontalLayout_18")
-        self.label_database_nama = QtWidgets.QLabel(self.frame_database_nama)
-        self.label_database_nama.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.label_database_nama.setObjectName("label_database_nama")
-        self.horizontalLayout_18.addWidget(self.label_database_nama)
-        self.edit_database_nama = QtWidgets.QLineEdit(self.frame_database_nama)
-        self.edit_database_nama.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.edit_database_nama.setObjectName("edit_database_nama")
-        self.horizontalLayout_18.addWidget(self.edit_database_nama)
-        self.verticalLayout_8.addWidget(self.frame_database_nama)
-        self.frame_button_delete = QtWidgets.QFrame(self.frame_database_right)
-        self.frame_button_delete.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_button_delete.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_button_delete.setObjectName("frame_button_delete")
-        self.horizontalLayout_19 = QtWidgets.QHBoxLayout(self.frame_button_delete)
-        self.horizontalLayout_19.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_19.setSpacing(0)
-        self.horizontalLayout_19.setObjectName("horizontalLayout_19")
-        self.button_database_delete = QtWidgets.QPushButton(self.frame_button_delete)
-        self.button_database_delete.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.button_database_delete.setObjectName("button_database_delete")
-        self.horizontalLayout_19.addWidget(self.button_database_delete)
-        self.verticalLayout_8.addWidget(self.frame_button_delete)
-        self.horizontalLayout_15.addWidget(self.frame_database_right)
-        self.verticalLayout_3.addWidget(self.frame_database_menu, 0, QtCore.Qt.AlignLeft)
-        self.horizontalLayout_14.addWidget(self.frame_table)
+
+        self.database_page = ui_database(self.stackedWidget)
         self.stackedWidget.addWidget(self.database_page)
-        self.graph_page = QtWidgets.QWidget()
+        
+        self.graph_page = QtWidgets.QWidget(self.stackedWidget)
         self.graph_page.setStyleSheet("#frame_graph_gbframe QComboBox\n"
 "{\n"
 "text-align: center;\n"
@@ -877,6 +560,7 @@ class Ui_MainWindow(object):
         self.label_graph_tlabel = QtWidgets.QLabel(self.frame_graph_tframe)
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
+        font.setPointSize(-1)
         self.label_graph_tlabel.setFont(font)
         self.label_graph_tlabel.setObjectName("label_graph_tlabel")
         self.horizontalLayout_21.addWidget(self.label_graph_tlabel, 0, QtCore.Qt.AlignLeft)
@@ -890,6 +574,7 @@ class Ui_MainWindow(object):
         self.button_graph_main = QtWidgets.QPushButton(self.frame_graph_gbframe)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.button_graph_main.setFont(font)
         icon = QtGui.QIcon.fromTheme("SP_ArrowBack")
         self.button_graph_main.setIcon(icon)
@@ -898,6 +583,7 @@ class Ui_MainWindow(object):
         self.button_graph_average = QtWidgets.QPushButton(self.frame_graph_gbframe)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.button_graph_average.setFont(font)
         self.button_graph_average.setObjectName("button_graph_average")
         self.verticalLayout_10.addWidget(self.button_graph_average)
@@ -991,6 +677,7 @@ class Ui_MainWindow(object):
         self.label_graph_main = QtWidgets.QLabel(self.frame_graph_mlabel)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_graph_main.setFont(font)
         self.label_graph_main.setAlignment(QtCore.Qt.AlignCenter)
         self.label_graph_main.setObjectName("label_graph_main")
@@ -1022,6 +709,7 @@ class Ui_MainWindow(object):
         self.label_graph_average = QtWidgets.QLabel(self.frame_graph_avglabel)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_graph_average.setFont(font)
         self.label_graph_average.setAlignment(QtCore.Qt.AlignCenter)
         self.label_graph_average.setObjectName("label_graph_average")
@@ -1053,6 +741,7 @@ class Ui_MainWindow(object):
         self.label_graph_sensor = QtWidgets.QLabel(self.frame_graph_slabel)
         font = QtGui.QFont()
         font.setFamily("Trebuchet MS")
+        font.setPointSize(-1)
         self.label_graph_sensor.setFont(font)
         self.label_graph_sensor.setAlignment(QtCore.Qt.AlignCenter)
         self.label_graph_sensor.setObjectName("label_graph_sensor")
@@ -1143,9 +832,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_29.addWidget(self.frame_graph_right)
         self.horizontalLayout_20.addWidget(self.frame)
         self.stackedWidget.addWidget(self.graph_page)
+        
         self.verticalLayout_2.addWidget(self.stackedWidget)
         self.verticalLayout.addWidget(self.frame_stacked)
         MainWindow.setCentralWidget(self.centralwidget)
+
 
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)
@@ -1154,6 +845,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
+        self.database_page.retranslateUi(MainWindow, _translate)
+        self.register_page.retranslateUi(MainWindow, _translate)
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_login_menu.setText(_translate("MainWindow", "MENU"))
         self.label_login_dash.setText(_translate("MainWindow", "DASHBOARD"))
@@ -1165,27 +858,6 @@ class Ui_MainWindow(object):
         self.edit_login_id_2.setPlaceholderText(_translate("MainWindow", "ID Pasien"))
         self.pushButton.setText(_translate("MainWindow", "Login"))
         self.button_login_sign.setText(_translate("MainWindow", "Register"))
-        self.label_create_main.setText(_translate("MainWindow", "PENDAFTARAN"))
-        self.edit_signup_id.setPlaceholderText(_translate("MainWindow", "ID"))
-        self.edit_signup_nama.setPlaceholderText(_translate("MainWindow", "Nama"))
-        self.edit_signup_umur.setPlaceholderText(_translate("MainWindow", "Umur"))
-        self.label_gender.setText(_translate("MainWindow", "Jenis Kelamin:"))
-        self.combobox_signup_gender.setItemText(0, _translate("MainWindow", "Laki-laki"))
-        self.combobox_signup_gender.setItemText(1, _translate("MainWindow", "Perempuan"))
-        self.button_signup_sign.setText(_translate("MainWindow", "Register"))
-        self.table_database_data.setSortingEnabled(True)
-        item = self.table_database_data.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "ID"))
-        item = self.table_database_data.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Nama"))
-        item = self.table_database_data.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Usia"))
-        item = self.table_database_data.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Jenis Kelamin"))
-        self.label_database_id.setText(_translate("MainWindow", "ID"))
-        self.button_database_back.setText(_translate("MainWindow", "Back"))
-        self.label_database_nama.setText(_translate("MainWindow", "Nama"))
-        self.button_database_delete.setText(_translate("MainWindow", "Delete"))
         self.label_graph_tlabel.setText(_translate("MainWindow", "PLOT GRAPH"))
         self.button_graph_main.setText(_translate("MainWindow", "Main Graph"))
         self.button_graph_average.setText(_translate("MainWindow", "Average Graph"))
@@ -1217,7 +889,7 @@ class Ui_MainWindow(object):
         self.label_graph_max.setText(_translate("MainWindow", "Max : 100 mm"))
         self.label_graph_min.setText(_translate("MainWindow", "Min : 2 mm"))
         self.label_graph_avg.setText(_translate("MainWindow", "Average : 51 mm"))
-import resources_rc
+from ui import resources_rc
 
 
 if __name__ == "__main__":
@@ -1226,5 +898,6 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    ui.stackedWidget.setCurrentIndex(3)
     MainWindow.show()
     sys.exit(app.exec_())
