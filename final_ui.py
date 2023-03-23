@@ -17,7 +17,6 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 800)
         MainWindow.setWindowFlag(Qt.FramelessWindowHint)
-        self.isFullScreen = False
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("*\n"
 "{\n"
@@ -662,6 +661,7 @@ class Ui_MainWindow(object):
         self.table_database_data.verticalHeader().setVisible(False)
         self.table_database_data.verticalHeader().setCascadingSectionResizes(False)
         self.table_database_data.verticalHeader().setSortIndicatorShown(False)
+        self.table_database_data.setColumnWidth(3, 200)
         self.verticalLayout_3.addWidget(self.table_database_data)
         self.frame_database_menu = QtWidgets.QFrame(self.frame_table)
         self.frame_database_menu.setMinimumSize(QtCore.QSize(0, 50))
@@ -1217,21 +1217,6 @@ class Ui_MainWindow(object):
         self.label_graph_max.setText(_translate("MainWindow", "Max : 100 mm"))
         self.label_graph_min.setText(_translate("MainWindow", "Min : 2 mm"))
         self.label_graph_avg.setText(_translate("MainWindow", "Average : 51 mm"))
-
-        #Setup three buttons to minimize, maximize, and exit the app
-        self.button_login_exit.clicked.connect(MainWindow.close)
-        self.button_login_min.clicked.connect(MainWindow.showMinimized)
-        self.button_login_size.clicked.connect(self.toggleMaximized)
-
-    def toggleMaximized(self):
-        if self.isFullScreen:
-                # If the window is currently maximized, restore it
-                MainWindow.showNormal()
-                self.isFullScreen = False
-        else:
-                # If the window is not currently maximized, maximize it
-                MainWindow.showMaximized()
-                self.isFullScreen = True
 import resources_rc
 
 
