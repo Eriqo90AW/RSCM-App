@@ -387,7 +387,7 @@ QHeaderView::section {
           <string notr="true">background-color: rgba(0, 0, 0, 0);</string>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="home_page">
           <property name="styleSheet">
@@ -728,7 +728,7 @@ padding-bottom:7px;</string>
                   <number>10</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="pushButton">
+                  <widget class="QPushButton" name="button_login_login">
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -1807,7 +1807,7 @@ QComboBox {
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="QPushButton" name="pushButton_2">
+                     <widget class="QPushButton" name="button_graph_load">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>

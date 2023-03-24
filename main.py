@@ -6,6 +6,7 @@ from menu import Menu
 from home import Home
 from setup_db import SetupDB
 from login import Login
+from register import Register
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -24,6 +25,7 @@ class MainWindow(QMainWindow):
         self.home = Home(self)
         self.setup_db = SetupDB('db/patient.db')
         self.login = Login(self)
+        self.register = Register(self)
 
 if __name__ == "__main__":
     import sys

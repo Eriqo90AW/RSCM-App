@@ -18,12 +18,17 @@ class SetupDB:
     def register(self, nama, usia, jenis_kelamin):
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
-
-        c.execute("INSERT INTO patient (nama, usia, jenis_kelamin) VALUES (?, ?, ?)",
+        
+        try:
+            c.execute("INSERT INTO patient (nama, usia, jenis_kelamin) VALUES (?, ?, ?)",
                 (nama, usia, jenis_kelamin))
-        conn.commit()
-
-        conn.close()
+            conn.commit()
+            conn.close()
+            return True
+        except sqlite3.IntegrityError:
+            # Registration failed due to a duplicate username
+            conn.close()
+            return False
 
     def login(self, id):
         conn = sqlite3.connect(self.db_file)
@@ -39,3 +44,14 @@ class SetupDB:
             return {'id': result[0], 'nama': result[1], 'usia': result[2], 'jenis_kelamin': result[3]}
         else:
             return None
+    
+    def getLastId(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+
+        # Fetch the latest ID from the users table
+        latest_id = c.execute("SELECT MAX(id) FROM patient").fetchone()[0]
+        # Close the database connection
+        conn.close()
+
+        return latest_id

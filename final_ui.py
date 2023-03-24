@@ -444,7 +444,7 @@ class Ui_MainWindow(object):
 "{\n"
 "    border:none;\n"
 "    border-bottom:2px solid rgba(255, 255, 255, 155);\n"
-"    color:rgba(50,50,50,250);\n"
+"    color:white;\n"
 "    padding-bottom:7px;\n"
 "}\n"
 "\n"
@@ -522,6 +522,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.edit_signup_id = QtWidgets.QLineEdit(self.frame_signup_id)
         self.edit_signup_id.setObjectName("edit_signup_id")
+        self.edit_signup_id.setReadOnly(True)
         self.horizontalLayout_10.addWidget(self.edit_signup_id)
         self.verticalLayout_7.addWidget(self.frame_signup_id)
         self.frame_signup_nama = QtWidgets.QFrame(self.frame_register_main)
