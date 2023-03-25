@@ -387,7 +387,7 @@ QHeaderView::section {
           <string notr="true">background-color: rgba(0, 0, 0, 0);</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="home_page">
           <property name="styleSheet">
@@ -803,7 +803,7 @@ padding-bottom:7px;</string>
 {
 	border:none;
 	border-bottom:2px solid rgba(255, 255, 255, 155);
-	color:rgba(50,50,50,250);
+	color:white;
 	padding-bottom:7px;
 }
 
@@ -916,6 +916,9 @@ background-color: rgba(33, 43, 51, 100);
                 <layout class="QHBoxLayout" name="horizontalLayout_10">
                  <item>
                   <widget class="QLineEdit" name="edit_signup_id">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
                    <property name="placeholderText">
                     <string>ID</string>
                    </property>
@@ -962,7 +965,7 @@ background-color: rgba(33, 43, 51, 100);
                 </layout>
                </widget>
               </item>
-              <item>
+              <item alignment="Qt::AlignBottom">
                <widget class="QFrame" name="frame_signup_label">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -981,7 +984,7 @@ background-color: rgba(33, 43, 51, 100);
                 </layout>
                </widget>
               </item>
-              <item>
+              <item alignment="Qt::AlignTop">
                <widget class="QFrame" name="frame_signup_combobox">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>

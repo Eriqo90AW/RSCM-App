@@ -55,3 +55,21 @@ class SetupDB:
         conn.close()
 
         return latest_id
+    
+    def getAllPatient(self):
+        # Open a connection to the database
+        conn = sqlite3.connect(self.db_file)
+
+        # Create a cursor object
+        cursor = conn.cursor()
+
+        # Execute a query to select all rows from a table
+        cursor.execute('SELECT * FROM patient')
+
+        result = cursor.fetchall()
+        
+        # Close the cursor and the database connection
+        cursor.close()
+        conn.close()
+
+        return result

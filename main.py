@@ -7,6 +7,7 @@ from home import Home
 from setup_db import SetupDB
 from login import Login
 from register import Register
+from database import Database
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow):
         self.setup_db = SetupDB('db/patient.db')
         self.login = Login(self)
         self.register = Register(self)
+        self.database = Database(self)
 
 if __name__ == "__main__":
     import sys

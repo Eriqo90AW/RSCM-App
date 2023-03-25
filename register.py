@@ -5,7 +5,6 @@ class Register:
     def __init__(self, main_window):
         self.main_window = main_window
         self.currentId = self.main_window.setup_db.getLastId() + 1
-        print(self.currentId)
         self.main_window.ui.edit_signup_id.setText(f"ID: {self.currentId}")
         self.jenis_kelamin = None
         self.usia = None
@@ -25,6 +24,7 @@ class Register:
         self.jenis_kelamin = jenis_kelamin
         patient = self.main_window.setup_db.register(nama, usia, jenis_kelamin)
         if patient:
+            self.main_window.database.updateTable()
             self.show_popup(f"Successfully registered patient with ID: {self.currentId}")
             self.main_window.ui.stackedWidget.setCurrentIndex(1)
         else:

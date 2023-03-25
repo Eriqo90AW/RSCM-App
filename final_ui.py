@@ -641,7 +641,7 @@ class Ui_MainWindow(object):
         self.table_database_data.setTextElideMode(QtCore.Qt.ElideLeft)
         self.table_database_data.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.table_database_data.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
-        self.table_database_data.setRowCount(4)
+        self.table_database_data.setRowCount(13)
         self.table_database_data.setObjectName("table_database_data")
         self.table_database_data.setColumnCount(5)
         item = QtWidgets.QTableWidgetItem()
