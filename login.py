@@ -15,11 +15,10 @@ class Login:
         self.id = id
         patient = self.main_window.setup_db.login(id)
         if patient:
-            # print(f"Logged in as user ID {patient['id']} with nama {patient['nama']} and usia {patient['usia']} and jenis kelamin {patient['jenis_kelamin']}")
             self.savePatient(patient)
+            self.main_window.graph.initPatient()
             self.main_window.ui.stackedWidget.setCurrentIndex(4)
         else:
-            # print("Login failed")
             self.show_popup()
     
     def savePatient(self, patient):

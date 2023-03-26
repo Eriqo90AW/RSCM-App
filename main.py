@@ -8,6 +8,7 @@ from setup_db import SetupDB
 from login import Login
 from register import Register
 from database import Database
+from graph_logic import GraphLogic
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -28,6 +29,7 @@ class MainWindow(QMainWindow):
         self.login = Login(self)
         self.register = Register(self)
         self.database = Database(self)
+        self.graph = GraphLogic(self)
 
 if __name__ == "__main__":
     import sys
