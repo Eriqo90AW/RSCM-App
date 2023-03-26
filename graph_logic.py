@@ -25,9 +25,6 @@ class GraphLogic:
         # Connect the buttons to the methods
         self.initButtons()
 
-        # Connect the close event to the method
-        self.main_window.closeEvent = self.printData
-
     # method to connect the buttons to the methods
     def initButtons(self):
         self.main_window.ui.button_graph_save.clicked.connect(lambda: self.saveButton())
@@ -39,7 +36,7 @@ class GraphLogic:
         self.main_window.ui.button_graph_load.clicked.connect(lambda: self.loadGraphInit())
         self.main_window.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
 
-        self.main_window.ui.button_login_exit.clicked.connect(lambda: self.printData)
+        self.main_window.ui.button_login_exit.clicked.connect(lambda: self.printData())
 
     # method to connect the close event to the method (called by login.py)
     def initPatient(self):
