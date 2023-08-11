@@ -1,8 +1,7 @@
 from PyQt5 import QtCore, QtGui
 
 # from graphs.graph_sim import GraphSim
-# from graphs.graph_arduino import *
-from graphs.graph_read import GraphRead
+from graphs.graph_arduino import *
 
 class GraphLogic:
     def __init__(self, main_window):
@@ -11,9 +10,7 @@ class GraphLogic:
         self.currentGraph = "main"
 
         # Create a new graph widget
-        # self.graph = GraphSim(self.main_window)
-        # self.graph = GraphArduino()
-        self.graph = GraphRead(self.main_window)
+        self.graph = GraphArduino()
 
         # Add the widget to the frame inside the stacked widget
         self.main_window.ui.swidget_graph_swgraph.setCurrentIndex(0)

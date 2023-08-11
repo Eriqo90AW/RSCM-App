@@ -13,6 +13,7 @@ import numpy.typing as nt
 
 class GraphArduino:
     def __init__(self):
+        self.graph_type = "main"
         self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
         self.banyak_sensor=9 # jumlah sensor 9 buah
 
@@ -188,14 +189,19 @@ class GraphArduino:
 
 # Mendeteksi COM port  Arduino secara otomatis
 def serial_arduino():
-    coba_port=0 #dummy variabel untuk COM port
-    while True : 
-        try:
-            data_serial =serial.Serial('com%d'%coba_port, 115200) 
-            print("Tersambung pada COM PORT:", coba_port)
-            break #  berhenti ketika ketemu nomor com port yang benar
-        except:
-            coba_port +=1 #increment bila nomor com port tidak sesuai
+    # mencari COM port secara otomatis dengan percobaan sebanyak 5 kali
+    for i in range(5):
+        for coba_port in range(1, 11): #mencari COM port dari 0-10 (default
+            try:
+                data_serial =serial.Serial('com%d'%coba_port, 115200) 
+                print("Tersambung pada COM PORT:", coba_port)
+                break #  berhenti ketika ketemu nomor com port yang benar
+            except:
+                print("Mencari COM PORT...")
+                continue #increment bila nomor com port tidak sesuai
+        else:
+            continue
+        break
 
     time.sleep(1) # untuk loading 1 second agar tidak error
     data_serial.flushInput() #default
