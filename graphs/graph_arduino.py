@@ -66,21 +66,25 @@ class GraphArduino:
         #-------------
         # add legend to the graph
         self.plot_widget.addLegend()
-
+           
+    
+    # method untuk menginisialisasi grafik
+    def initGraph(self):
         #dari class WorkerThread()
         self.worker=WorkerThread()
         self.worker.start()
         self.worker.update_sinyal.connect(self.graphUpdate) # dipassingkan dengan nama "sinyal"
         self.worker.waktu.connect(self.waktu_sinyal) # dipasingkan dengan nama "waktu"
 
-        # update graph every 1 second
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.graphUpdate) 
-        self.timer.start(self.duration)
-    
     # method to start the graph
     def startGraph(self, graph_type):
+        # to restart the graph after pausing
+        if self.worker.running == False:
+            self.worker.running = True
+            self.worker.start()
+
         self.graph_type = graph_type
+
         #curve
         if self.graph_type == 'main':
             for i in range(1, self.banyak_sensor+1):
@@ -95,16 +99,25 @@ class GraphArduino:
             for i in range(1, self.banyak_sensor+1):
                 if self.graph_type == 'Sensor %d'%i:
                     self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.arr_sensors["arr_sensor%d"%i], name="Sensor %d"%i, pen=self.pens["pen%d"%i])} )
-    
+
+    # method to clear the graph
+    def clearGraph(self):
+        self.plot_widget.clear()
+
     # method to pause the graph
-    def pauseGraph(self):
-        # stop the timer to pause the graph
-        self.timer.stop()
+    def pauseGraph(self, first_time):
+        if first_time:
+            pass
+        else:
+            self.worker.running = False
 
     # method to stop the graph
-    def stopGraph(self):
-        # clear the graph
-        self.plot_widget.clear()
+    def stopGraph(self, first_time):
+        if first_time:
+            pass
+        else:
+            self.worker.running = False
+            self.plot_widget.clear()
     
     def saveGraph(self):
         seluruh_sensor, average= self.arr_sensors,self.arr_average
@@ -142,13 +155,12 @@ class GraphArduino:
        # self.arr_sensors.update{sensor%d'%i: seluruh_sensor["arr_sensor%d"%i]}
         pass
 
-
-
     # function untuk update waktu terbaru
     def waktu_sinyal(self, waktu): 
         # argument "waktu" berasal dari self.worker.waktu.connect()
         self.current_time +=waktu # delay arduino dijadikan pergerakan grafik sumbu 
-        #print("transfer detik:", waktu)
+        # print("transfer detik:", waktu)
+
     def min_max(self):
         for i in range (1, self.banyak_sensor+1):
             a= np.max(self.arr_sensors["arr_sensor%d"%i])
@@ -215,11 +227,15 @@ class WorkerThread(QtCore.QThread):
     waktu           =pyqtSignal(float) # mengirimkan delay dari "emit()"
     arduino_data    =serial_arduino() # berasal dari function yang mencari COM PORT
 
+    def __init__(self):
+        super().__init__()
+        self.running = True
+
   # Function which is executed by the thread (must be named 'run')
     def run(self):
-        print("thread started")
+        print("Thread Started")
         # Reading data from serial port
-        while True: # default
+        while self.running: # default
           if self.arduino_data.inWaiting: # default
             c     = time.time()# waktu sebelum mulai
             data_paket  = self.arduino_data.readline() # membaca output arduino
