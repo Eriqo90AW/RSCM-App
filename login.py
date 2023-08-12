@@ -13,12 +13,12 @@ class Login:
 
     def loginById(self, id):
         self.id = id
-        patient = self.main_window.setup_db.login(id)
-        if patient:
+        try:
+            patient = self.main_window.setup_db.login(id)
             self.savePatient(patient)
             self.main_window.graph.initPatient()
             self.main_window.ui.stackedWidget.setCurrentIndex(4)
-        else:
+        except:
             self.show_popup()
     
     def savePatient(self, patient):

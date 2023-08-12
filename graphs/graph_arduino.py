@@ -14,9 +14,10 @@ import numpy.typing as nt
 class GraphArduino:
     def __init__(self, parent):
         self.parent = parent
+        self.mode = "normal"
         self.graph_type = "main"
-        self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
         self.banyak_sensor=9 # jumlah sensor 9 buah
+        self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
 
         #---Inisiasi awal untuk sumbu Y-----
     
@@ -65,8 +66,8 @@ class GraphArduino:
         #-------------------------------------------------------
         self.curve={} # nanti curve di append ke sini
         #-------------
-        # add legend to the graph
-        self.plot_widget.addLegend()
+        self.plot_widget.addLegend() # add legend to the graph
+        self.plot_widget.getViewBox().setMouseEnabled(x=True, y=True) # enable zooming and panning
            
     
     # method untuk menginisialisasi grafik
@@ -83,6 +84,8 @@ class GraphArduino:
         if self.worker.running == False:
             self.worker.running = True
             self.worker.start()
+            self.worker.update_sinyal.connect(self.graphUpdate)
+            self.worker.waktu.connect(self.waktu_sinyal)
 
         self.graph_type = graph_type
 
@@ -117,8 +120,19 @@ class GraphArduino:
         if first_time:
             pass
         else:
-            self.worker.running = False
             self.plot_widget.clear()
+            self.worker.running = False
+            self.worker.update_sinyal.disconnect(self.graphUpdate)
+            self.worker.waktu.disconnect(self.waktu_sinyal)
+            # reset all the arrays
+            self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
+            self.arr_average= [] # rata-rata
+            self.arr_sensors={"arr_sensor1": [], "arr_sensor2": [], "arr_sensor3": [],
+            "arr_sensor4": [], "arr_sensor5": [], "arr_sensor6":[], 
+            "arr_sensor7": [],"arr_sensor8": [], "arr_sensor9": []} #array untuk menyimpan data sensor
+            self.current_time  = 0 # pegerakan awal sumbu X ( Waktu akan di increment pada "def waktu_sinyal()"" ) 
+            self.curve={} # nanti curve di append ke sini
+            
     
     def saveGraph(self):
         seluruh_sensor, average= self.arr_sensors,self.arr_average
@@ -178,7 +192,7 @@ class GraphArduino:
                 self.parent.statsUpdate(max, min, avg)
                 return
             else:
-                for i in range(1, 10):
+                for i in range(1, self.banyak_sensor+1):
                     if self.graph_type == 'Sensor %d'%i:
                         max= np.max(self.arr_sensors["arr_sensor%d"%i])
                         min= np.min(self.arr_sensors["arr_sensor%d"%i])
@@ -220,6 +234,12 @@ class GraphArduino:
 
     def array_sensor(self): # memudahkan memanggil array sensor  database
         return self.arr_sensors,self.arr_average
+    
+    def changeMode(self):
+        if self.mode == "normal":
+            self.mode = "follow"
+        elif self.mode == "follow":
+            self.mode = "normal"
   
 
 

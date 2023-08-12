@@ -1,3 +1,4 @@
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from final_ui import *

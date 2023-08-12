@@ -28,6 +28,9 @@ class GraphLogic:
         self.main_window.ui.button_graph_main.clicked.connect(lambda: self.mainGraphInit())
         self.main_window.ui.button_graph_average.clicked.connect(lambda: self.averageGraphInit())
         self.main_window.ui.button_graph_load.clicked.connect(lambda: self.loadGraphInit())
+
+        first_item = self.main_window.ui.combo_graph_sensors.model().item(0)
+        first_item.setEnabled(False) # disable the first option in combo box
         self.main_window.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
 
         # self.main_window.ui.button_login_exit.clicked.connect(lambda: self.printData())
