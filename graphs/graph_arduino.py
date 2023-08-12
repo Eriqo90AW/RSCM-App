@@ -12,7 +12,8 @@ import json
 import numpy.typing as nt
 
 class GraphArduino:
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
         self.graph_type = "main"
         self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
         self.banyak_sensor=9 # jumlah sensor 9 buah
@@ -92,7 +93,7 @@ class GraphArduino:
             #-----------------------------------
           
         elif self.graph_type == 'average':
-            self.curve_avg  = self.plot_widget.plot(self.time_recorded,self.arr_average, name="average", pen=self.penavg)
+            self.curve_avg  = self.plot_widget.plot(self.time_recorded,self.arr_average, name="Average", pen=self.penavg)
 
         # bila hanya salah satu sensor saja yang ditampilkan  
         else:
@@ -161,18 +162,39 @@ class GraphArduino:
         self.current_time +=waktu # delay arduino dijadikan pergerakan grafik sumbu 
         # print("transfer detik:", waktu)
 
-    def min_max(self):
-        for i in range (1, self.banyak_sensor+1):
-            a= np.max(self.arr_sensors["arr_sensor%d"%i])
-            b= np.min(self.arr_sensors["arr_sensor%d"%i])
-        return a,b
+    def max_min_avg(self, sensor_num=0):
+        if not self.parent.isReset():
+            if self.graph_type == 'main':
+                for i in range (1, self.banyak_sensor+1):
+                    max= np.max(self.arr_sensors["arr_sensor%d"%i])
+                    min= np.min(self.arr_sensors["arr_sensor%d"%i])
+                avg = round(np.average(self.arr_average))
+                self.parent.statsUpdate(max, min, avg)
+                return
+            elif self.graph_type == 'average':
+                max= np.max(self.arr_average)
+                min= np.min(self.arr_average)
+                avg = round(np.average(self.arr_average))
+                self.parent.statsUpdate(max, min, avg)
+                return
+            else:
+                for i in range(1, 10):
+                    if self.graph_type == 'Sensor %d'%i:
+                        max= np.max(self.arr_sensors["arr_sensor%d"%i])
+                        min= np.min(self.arr_sensors["arr_sensor%d"%i])
+                        avg = round(np.average(self.arr_sensors["arr_sensor%d"%i]))
+                        self.parent.statsUpdate(max, min, avg)
+                        self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
+                        return
+
+        else:
+            self.parent.statsClear()
 
     # Funtion untuk update grafik tiap waktu  
     def graphUpdate(self, sinyal):
         # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
         self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
         self.update_sensor(sinyal) #agar array sensor tetap ter-update
-
         # update the graph
         if self.graph_type  == 'main':
             for i in range(1, len(sinyal)+1):
@@ -185,6 +207,8 @@ class GraphArduino:
             for i in range(1, len(sinyal)+1):
                 if self.graph_type == 'Sensor %d'%i:
                     self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
+        
+        self.max_min_avg() # agar stats label tetap ter-update
 
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
     def update_sensor(self, sinyal):
@@ -209,9 +233,11 @@ def serial_arduino():
                 print("Tersambung pada COM PORT:", coba_port)
                 break #  berhenti ketika ketemu nomor com port yang benar
             except:
+                time.sleep(0.2)
                 print("Mencari COM PORT...")
                 continue #increment bila nomor com port tidak sesuai
         else:
+            time.sleep(0.2)
             continue
         break
 

@@ -7,10 +7,11 @@ class GraphLogic:
     def __init__(self, main_window):
         self.main_window = main_window
         self.paused = True
+        self.reset = False
         self.currentGraph = "main"
         self.first_time = True
 
-        self.graph = GraphArduino()
+        self.graph = GraphArduino(self)
 
         self.main_window.ui.swidget_graph_swgraph.setCurrentIndex(0)
         self.main_window.ui.frame_graph_mgraph.layout().addWidget(self.graph.plot_widget)
@@ -40,6 +41,7 @@ class GraphLogic:
 
     # method to start and pause the graph
     def startButton(self):
+        self.reset = False
         # run the graph if it's the first time
         if self.first_time:
             self.graph.initGraph()
@@ -59,6 +61,7 @@ class GraphLogic:
         self.graph.pauseGraph(self.first_time)
         self.main_window.ui.button_graph_start.setText("Start")
         self.paused = True
+        self.reset = True
         self.graph.stopGraph(self.first_time)
     
     def saveButton(self):
@@ -66,6 +69,7 @@ class GraphLogic:
         self.graph.saveGraph()
     
     def mainGraphInit(self):
+        self.statsClear()
         self.currentGraph = "main"
         self.main_window.ui.label_graph_main.setText("Main Graph")
         self.graph.clearGraph()
@@ -75,6 +79,7 @@ class GraphLogic:
         self.main_window.ui.button_graph_main.setStyleSheet("background-color: rgba(61, 80, 95, 100);")
 
     def averageGraphInit(self):
+        self.statsClear()
         self.currentGraph = "average"
         self.main_window.ui.label_graph_main.setText("Average Graph")
         self.graph.clearGraph()
@@ -84,6 +89,7 @@ class GraphLogic:
         self.main_window.ui.button_graph_average.setStyleSheet("background-color: rgba(61, 80, 95, 100);")
     
     def sensorsGraphInit(self):
+        self.statsClear()
         sensor_name = self.main_window.ui.combo_graph_sensors.currentText()
         self.main_window.ui.label_graph_main.setText(sensor_name)
         self.currentGraph = sensor_name
@@ -105,6 +111,19 @@ class GraphLogic:
         for i in range(1,len(seluruh_sensor)+1):
             print("sensor%d:"%i, seluruh_sensor["arr_sensor%d"%i])
             print("sensor%d:"%i, seluruh_sensor["arr_sensor%d"%i].__sizeof__(),"bytes\n")
+    
+    def statsUpdate(self, max, min, average):
+        self.main_window.ui.label_graph_max.setText(f"Max : {max} mm")
+        self.main_window.ui.label_graph_min.setText(f"Min : {min} mm")
+        self.main_window.ui.label_graph_avg.setText(f"Average : {average} mm")
+
+    def statsClear(self):
+        self.main_window.ui.label_graph_max.setText(f"Max : {0} mm")
+        self.main_window.ui.label_graph_min.setText(f"Min : {0} mm")
+        self.main_window.ui.label_graph_avg.setText(f"Average : {0} mm")
+
+    def isReset(self):
+        return self.reset
 
 # utilities functions
 def capitalize_first_letter(word):
