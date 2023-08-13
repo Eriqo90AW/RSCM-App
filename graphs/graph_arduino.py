@@ -10,11 +10,13 @@ from PyQt5.QtWidgets import *
 import datetime
 import json
 import numpy.typing as nt
+from PyQt5.QtCore import QCoreApplication
 
 class GraphArduino:
     def __init__(self, parent):
         self.parent = parent
         self.mode = "normal"
+        self.disconnected = False
         self.graph_type = "main"
         self.banyak_sensor=9 # jumlah sensor 9 buah
         self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
@@ -74,9 +76,15 @@ class GraphArduino:
     def initGraph(self):
         #dari class WorkerThread()
         self.worker=WorkerThread()
-        self.worker.start()
-        self.worker.update_sinyal.connect(self.graphUpdate) # dipassingkan dengan nama "sinyal"
-        self.worker.waktu.connect(self.waktu_sinyal) # dipasingkan dengan nama "waktu"
+        if(self.worker.getArduinoData() == None):
+            self.parent.first_time = True
+        else:
+            print("Initiated")
+            self.worker.start()
+            self.worker.update_sinyal.connect(self.graphUpdate) # dipassingkan dengan nama "sinyal"
+            self.worker.waktu.connect(self.waktu_sinyal) # dipasingkan dengan nama "waktu"
+            self.parent.first_time = False
+
 
     # method to start the graph
     def startGraph(self, graph_type):
@@ -86,6 +94,7 @@ class GraphArduino:
             self.worker.start()
             self.worker.update_sinyal.connect(self.graphUpdate)
             self.worker.waktu.connect(self.waktu_sinyal)
+            self.disconnected = False
 
         self.graph_type = graph_type
 
@@ -120,10 +129,15 @@ class GraphArduino:
         if first_time:
             pass
         else:
-            self.plot_widget.clear()
-            self.worker.running = False
+            # Set a flag to indicate that disconnection is happening
+            self.disconnected = True
+            # Disconnect the signals
             self.worker.update_sinyal.disconnect(self.graphUpdate)
             self.worker.waktu.disconnect(self.waktu_sinyal)
+
+            self.worker.running = False
+            self.plot_widget.clear()
+            print("after disconnecting")
             # reset all the arrays
             self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
             self.arr_average= [] # rata-rata
@@ -206,23 +220,24 @@ class GraphArduino:
 
     # Funtion untuk update grafik tiap waktu  
     def graphUpdate(self, sinyal):
-        # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
-        self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
-        self.update_sensor(sinyal) #agar array sensor tetap ter-update
-        # update the graph
-        if self.graph_type  == 'main':
-            for i in range(1, len(sinyal)+1):
-                self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
-
-        elif self.graph_type == 'average':
-            self.curve_avg.setData(self.time_recorded,self.arr_average)
-
-        else:
-            for i in range(1, len(sinyal)+1):
-                if self.graph_type == 'Sensor %d'%i:
+        if not self.disconnected:
+            # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
+            self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
+            self.update_sensor(sinyal) #agar array sensor tetap ter-update
+            # update the graph
+            if self.graph_type  == 'main':
+                for i in range(1, len(sinyal)+1):
                     self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
-        
-        self.max_min_avg() # agar stats label tetap ter-update
+
+            elif self.graph_type == 'average':
+                self.curve_avg.setData(self.time_recorded,self.arr_average)
+
+            else:
+                for i in range(1, len(sinyal)+1):
+                    if self.graph_type == 'Sensor %d'%i:
+                        self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
+            
+            self.max_min_avg() # agar stats label tetap ter-update
 
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
     def update_sensor(self, sinyal):
@@ -245,8 +260,23 @@ class GraphArduino:
 
 # Mendeteksi COM port  Arduino secara otomatis
 def serial_arduino():
+    # Create a QMessageBox widget
+    dialog = QMessageBox()
+
+    # Set the text and title of the message box
+    dialog.setWindowTitle("Searching...")
+    dialog.setText(f"Mencari COM PORT...")
+
+    # Set the icon and buttons of the message box
+    dialog.setIcon(QMessageBox.Information)
+    dialog.setStandardButtons(QMessageBox.NoButton)
+
+    # Show the message box and wait for a response
+    dialog.show()
+    QCoreApplication.processEvents()
+
     # mencari COM port secara otomatis dengan percobaan sebanyak 5 kali
-    for i in range(5):
+    for i in range(1):
         for coba_port in range(1, 11): #mencari COM port dari 0-10 (default
             try:
                 data_serial =serial.Serial('com%d'%coba_port, 115200) 
@@ -259,24 +289,56 @@ def serial_arduino():
         else:
             time.sleep(0.2)
             continue
+        dialog.close
         break
+    else:
+        print("COM PORT tidak terdeteksi")
+        dialog.close
+        show_popup()
+        return
 
     time.sleep(1) # untuk loading 1 second agar tidak error
     data_serial.flushInput() #default
     data_serial.setDTR(True) #default
     return data_serial # dipassingkan ke class WorkerThread
 
+def show_popup():
+    # Create a QMessageBox widget
+    message_box = QMessageBox()
+
+    # Set the text and title of the message box
+    message_box.setText(f"COM PORT tidak terdeteksi")
+    message_box.setWindowTitle("Error")
+
+    # Set the icon and buttons of the message box
+    message_box.setIcon(QMessageBox.Information)
+    message_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+
+    # Show the message box and wait for a response
+    message_box.exec_()
+
 # Threading Class
 class WorkerThread(QtCore.QThread):
 
     update_sinyal   =pyqtSignal(object) # mengirimkan self.array dari "emit()"
     waktu           =pyqtSignal(float) # mengirimkan delay dari "emit()"
-    arduino_data    =serial_arduino() # berasal dari function yang mencari COM PORT
+    # arduino_data    =serial_arduino() # berasal dari function yang mencari COM PORT
 
     def __init__(self):
         super().__init__()
         self.running = True
+        # self.update_sinyal   =pyqtSignal(object) # mengirimkan self.array dari "emit()"
+        # self.waktu           =pyqtSignal(float) # mengirimkan delay dari "emit()"
+        self.arduino_data    =None
+        try:
+            self.arduino_data    =serial_arduino() # berasal dari function yang mencari COM PORT
+            self.running = False
+        except:
+            self.arduino_data = None
+            self.running = False
 
+    def getArduinoData(self):
+        return self.arduino_data
   # Function which is executed by the thread (must be named 'run')
     def run(self):
         print("Thread Started")

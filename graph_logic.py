@@ -18,6 +18,7 @@ class GraphLogic:
 
         # Connect the buttons to the methods
         self.initButtons()
+        self.statsClear()
 
     # method to connect the buttons to the methods
     def initButtons(self):
@@ -48,9 +49,8 @@ class GraphLogic:
         # run the graph if it's the first time
         if self.first_time:
             self.graph.initGraph()
-            self.first_time = False
         if self.paused:
-            self.graph.clearGraph
+            self.graph.clearGraph()
             self.graph.startGraph(self.currentGraph)
             self.main_window.ui.button_graph_start.setText("Pause")
             self.paused = False
@@ -61,10 +61,9 @@ class GraphLogic:
     
     # method to stop and reset the graph
     def stopButton(self):
-        self.graph.pauseGraph(self.first_time)
-        self.main_window.ui.button_graph_start.setText("Start")
         self.paused = True
         self.reset = True
+        self.main_window.ui.button_graph_start.setText("Start")
         self.graph.stopGraph(self.first_time)
     
     def saveButton(self):
