@@ -16,7 +16,10 @@ class GraphArduino:
     def __init__(self, parent):
         self.parent = parent
         self.mode = "normal"
+        self.testing = False
+        self.counter = 0
         self.disconnected = False
+        self.maxValue = 700
         self.graph_type = "main"
         self.banyak_sensor=9 # jumlah sensor 9 buah
         self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
@@ -44,7 +47,9 @@ class GraphArduino:
         self.plot_widget.setLabel("bottom", "Seconds (s)", **self.styles)
 
         # Set the y range of the plot
-        self.plot_widget.setYRange(0, 700, padding=0)
+        self.plot_widget.setYRange(0, self.maxValue)
+
+        self.plot_widget.keyPressEvent = self.handleKeyPressEvent
 
         # Show the grid lines
         self.plot_widget.showGrid(x=True, y=True)
@@ -236,7 +241,13 @@ class GraphArduino:
                 for i in range(1, len(sinyal)+1):
                     if self.graph_type == 'Sensor %d'%i:
                         self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
-            
+
+            if self.mode == "normal":
+                self.plot_widget.setXRange(0, self.time_recorded[-1])
+            elif self.mode == "follow":
+                self.plot_widget.setXRange(self.time_recorded[-1] - 5, self.time_recorded[-1] + 1)
+            elif self.mode == "default":
+                self.plot_widget.setXRange(self.time_recorded[-1] - 10, self.time_recorded[-1] + 4)
             self.max_min_avg() # agar stats label tetap ter-update
 
     # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
@@ -254,7 +265,19 @@ class GraphArduino:
         if self.mode == "normal":
             self.mode = "follow"
         elif self.mode == "follow":
+            self.mode = "default"
+        elif self.mode == "default":
             self.mode = "normal"
+
+    def handleKeyPressEvent(self, ev):
+        if ev.key() == pg.QtCore.Qt.Key_Space:
+            self.changeMode()
+        # elif ev.key() == pg.QtCore.Qt.Key_Plus and ev.modifiers() == pg.QtCore.Qt.ControlModifier:
+        #     # Handle Ctrl + +: Zoom in
+        #     self.plot_widget.plotItem.getViewBox().scaleBy((0.5, 1))
+        # elif ev.key() == pg.QtCore.Qt.Key_Minus and ev.modifiers() == pg.QtCore.Qt.ControlModifier:
+        #     # Handle Ctrl + -: Zoom out
+        #     self.plot_widget.plotItem.getViewBox().scaleBy((2, 1))
   
 
 
