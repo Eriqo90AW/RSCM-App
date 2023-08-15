@@ -20,12 +20,13 @@ class GraphArduino:
         self.counter = 0
         self.disconnected = False
         self.maxValue = 700
+        self.targetScore = 300
         self.graph_type = "main"
         self.banyak_sensor=9 # jumlah sensor 9 buah
         self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
 
         #---Inisiasi awal untuk sumbu Y-----
-    
+        self.arr_target = [] # target
         self.arr_average= [] # rata-rata
         #arr_sensor1
         self.arr_sensors={"arr_sensor1": [], "arr_sensor2": [], "arr_sensor3": [],
@@ -66,6 +67,8 @@ class GraphArduino:
         self.pen9   = pg.mkPen(color='#baeb34', width=2) #lime
         self.penavg = pg.mkPen(color='#eb34e1', width=2) #pink
 
+        self.pentarget = pg.mkPen(color='#a9a9a9', width=1, style=Qt.DashLine) #gray dotted
+
         self.pens={"pen1": self.pen1, "pen2": self.pen2, "pen3": self.pen3, 
         "pen4":self.pen4, "pen5": self.pen5, "pen6": self.pen6, 
         "pen7": self.pen7, "pen8": self.pen8, "pen9": self.pen9}
@@ -102,6 +105,9 @@ class GraphArduino:
             self.disconnected = False
 
         self.graph_type = graph_type
+
+        # plot target
+        self.curve_target = self.plot_widget.plot(self.time_recorded,self.arr_target, name="Target", pen=self.pentarget)
 
         #curve
         if self.graph_type == 'main':
@@ -229,6 +235,10 @@ class GraphArduino:
             # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
             self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
             self.update_sensor(sinyal) #agar array sensor tetap ter-update
+
+            # update target
+            self.curve_target.setData(self.time_recorded,self.arr_target)
+
             # update the graph
             if self.graph_type  == 'main':
                 for i in range(1, len(sinyal)+1):
@@ -254,6 +264,7 @@ class GraphArduino:
     def update_sensor(self, sinyal):
         self.banyak_sensor  = len(sinyal)
         self.arr_average.append(round(np.average(sinyal)) ) #average dua digit desimal
+        self.arr_target.append(self.targetScore) # update target (maksimal 9 sensor
 
         for i in range(len(sinyal)):
            self.arr_sensors["arr_sensor%d"%(i+1)].append(sinyal[i]) # update tiap sensor (maksimal 9 sensor)
