@@ -11,6 +11,7 @@ import datetime
 import json
 import numpy.typing as nt
 from PyQt5.QtCore import QCoreApplication
+import os
 
 class GraphArduino:
     def __init__(self, parent):
@@ -130,15 +131,15 @@ class GraphArduino:
         self.plot_widget.clear()
 
     # method to pause the graph
-    def pauseGraph(self, first_time):
-        if first_time:
+    def pauseGraph(self):
+        if self.parent.first_time:
             pass
         else:
             self.worker.running = False
 
     # method to stop the graph
-    def stopGraph(self, first_time):
-        if first_time:
+    def stopGraph(self):
+        if self.parent.first_time:
             pass
         else:
             # Set a flag to indicate that disconnection is happening
@@ -161,36 +162,47 @@ class GraphArduino:
             
     
     def saveGraph(self):
-        seluruh_sensor, average= self.arr_sensors,self.arr_average
-        
-       # for i in range(1,len(seluruh_sensor)+1):
-           # seluruh_sensor["arr_sensor%d"%i] =np.asarray(seluruh_sensor["arr_sensor%d"%i])
-        #average=np.asarray(average)
-        date = datetime.datetime.now().strftime("%Y-%m-%d_%I-%M %p")
-        data = {'average': average}
-        for i in range(1, len(seluruh_sensor)+1):
-            data.update({'sensor%d'%i: seluruh_sensor["arr_sensor%d"%i] })
+        if self.parent.first_time:
+            pass
+        else:
+            self.parent.paused = False
+            self.parent.startButton() # simulating pressing the pause button
 
-        path =  "%s.json"%date
+            seluruh_sensor, average= self.arr_sensors,self.arr_average
+            user = self.parent.user
 
-        with open("%s"%path,"w") as f:
-            json.dump(data, f)  
-        with open("%s"%path, 'r') as f:
-            data = json.load(f)
-        print(data)
+            date = datetime.datetime.now().strftime("%H.%M_%d-%m-%Y")
+            final_format = f"{user}_{date}"
 
-        #for i in range(1,len(seluruh_sensor)+1):
-            #with open("%s"%path,"a") as f:
-             #   json.dump(seluruh_sensor["arr_sensor%d"%i], f)
+            data = {'average': average, 'target': self.arr_target, 'time_recorded': self.time_recorded}
 
-        # simpan seluruh sensor
-            #with open("%s"%path,"a") as f:
-                #np.savetxt(f, (seluruh_sensor["arr_sensor%d"%i], ), fmt="%d", delimiter=',', header="sensor%d: "%i) 
+            for i in range(1, len(seluruh_sensor)+1):
+                data.update({'sensor%d'%i: seluruh_sensor["arr_sensor%d"%i] })
 
-        # simpan average array
-       # with open("%s"%path,"a") as f:
-            #np.savetxt(f, (average, ), fmt="%d", delimiter=',', header="average: ") # simpan average array '''
+            # Construct the path to the "archive" folder
+            archive_folder = os.path.join(os.path.dirname(__file__), "..", "archive")
+            os.makedirs(archive_folder, exist_ok=True)  # Create the folder if it doesn't exist
+
+            # Construct the full path for the JSON file inside the "archive" folder
+            file_name = f"{final_format}.json"
+            json_path = os.path.join(archive_folder, file_name)
+
+            with open(json_path, "w") as f:
+                json.dump(data, f, indent=4)
             
+            show_popup("Saved Successfully", "Saving")
+
+            # with open(json_path, 'r') as f:
+            #     data = json.load(f)
+
+    
+    def loadGraph(self):
+        # print("SAVEEE BISAAAAAAAAA")
+        current_directory = os.path.join(os.path.dirname(__file__), "..", "archive")
+        # print(a)
+        self.filenames, ignore=QFileDialog.getOpenFileNames(self.parent.main_window, 'Open file', current_directory)
+        print(type(*self.filenames))
+
     def readGraph(self):
        # data=saveGraph()
        # self.arr_sensors.update{sensor%d'%i: seluruh_sensor["arr_sensor%d"%i]}
@@ -284,13 +296,6 @@ class GraphArduino:
     def handleKeyPressEvent(self, ev):
         if ev.key() == pg.QtCore.Qt.Key_Space:
             self.changeMode()
-        # elif ev.key() == pg.QtCore.Qt.Key_Plus and ev.modifiers() == pg.QtCore.Qt.ControlModifier:
-        #     # Handle Ctrl + +: Zoom in
-        #     self.plot_widget.plotItem.getViewBox().scaleBy((0.5, 1))
-        # elif ev.key() == pg.QtCore.Qt.Key_Minus and ev.modifiers() == pg.QtCore.Qt.ControlModifier:
-        #     # Handle Ctrl + -: Zoom out
-        #     self.plot_widget.plotItem.getViewBox().scaleBy((2, 1))
-  
 
 
 # Mendeteksi COM port  Arduino secara otomatis
@@ -329,7 +334,7 @@ def serial_arduino():
     else:
         print("COM PORT tidak terdeteksi")
         dialog.close
-        show_popup()
+        show_popup("COM PORT tidak terdeteksi", "Error")
         return
 
     time.sleep(1) # untuk loading 1 second agar tidak error
@@ -337,13 +342,13 @@ def serial_arduino():
     data_serial.setDTR(True) #default
     return data_serial # dipassingkan ke class WorkerThread
 
-def show_popup():
+def show_popup(message, title):
     # Create a QMessageBox widget
     message_box = QMessageBox()
 
     # Set the text and title of the message box
-    message_box.setText(f"COM PORT tidak terdeteksi")
-    message_box.setWindowTitle("Error")
+    message_box.setText(f"{message}")
+    message_box.setWindowTitle(f"{title}")
 
     # Set the icon and buttons of the message box
     message_box.setIcon(QMessageBox.Information)

@@ -10,6 +10,7 @@ class GraphLogic:
         self.reset = False
         self.currentGraph = "main"
         self.first_time = True
+        self.user = None
 
         self.graph = GraphArduino(self)
 
@@ -38,8 +39,9 @@ class GraphLogic:
 
     # method to connect the close event to the method (called by login.py)
     def initPatient(self):
+        self.user = capitalize_first_letter(self.main_window.current_patient['nama'])
         self.main_window.ui.label_graph_id.setText(f"ID : {self.main_window.current_patient['id']}")
-        self.main_window.ui.label_graph_name.setText(f"Nama : {capitalize_first_letter(self.main_window.current_patient['nama'])}")
+        self.main_window.ui.label_graph_name.setText(f"Nama : {self.user}")
         self.main_window.ui.label_graph_umur.setText(f"Usia : {self.main_window.current_patient['usia']}")
         self.main_window.ui.label_graph_gender.setText(f"Jenis Kelamin : {capitalize_first_letter(self.main_window.current_patient['jenis_kelamin'])}")
 
@@ -57,7 +59,7 @@ class GraphLogic:
                 self.main_window.ui.button_graph_start.setText("Pause")
                 self.paused = False
             elif self.paused == False: # if paused
-                self.graph.pauseGraph(self.first_time)
+                self.graph.pauseGraph()
                 self.main_window.ui.button_graph_start.setText("Start")
                 self.paused = True
     
@@ -66,7 +68,7 @@ class GraphLogic:
         self.paused = True
         self.reset = True
         self.main_window.ui.button_graph_start.setText("Start")
-        self.graph.stopGraph(self.first_time)
+        self.graph.stopGraph()
     
     def saveButton(self):
         self.paused==True
