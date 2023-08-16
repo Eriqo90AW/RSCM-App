@@ -152,6 +152,7 @@ class GraphArduino:
             # reset all the arrays
             self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
             self.arr_average= [] # rata-rata
+            self.arr_target = [] # target
             self.arr_sensors={"arr_sensor1": [], "arr_sensor2": [], "arr_sensor3": [],
             "arr_sensor4": [], "arr_sensor5": [], "arr_sensor6":[], 
             "arr_sensor7": [],"arr_sensor8": [], "arr_sensor9": []} #array untuk menyimpan data sensor
