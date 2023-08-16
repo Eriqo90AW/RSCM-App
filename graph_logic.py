@@ -49,15 +49,17 @@ class GraphLogic:
         # run the graph if it's the first time
         if self.first_time:
             self.graph.initGraph()
-        if self.paused:
-            self.graph.clearGraph()
-            self.graph.startGraph(self.currentGraph)
-            self.main_window.ui.button_graph_start.setText("Pause")
-            self.paused = False
-        elif self.paused == False:
-            self.graph.pauseGraph(self.first_time)
-            self.main_window.ui.button_graph_start.setText("Start")
-            self.paused = True
+            # return
+        if not self.first_time:
+            if self.paused: # if started
+                self.graph.clearGraph()
+                self.graph.startGraph(self.currentGraph)
+                self.main_window.ui.button_graph_start.setText("Pause")
+                self.paused = False
+            elif self.paused == False: # if paused
+                self.graph.pauseGraph(self.first_time)
+                self.main_window.ui.button_graph_start.setText("Start")
+                self.paused = True
     
     # method to stop and reset the graph
     def stopButton(self):

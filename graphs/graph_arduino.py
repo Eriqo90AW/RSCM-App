@@ -88,9 +88,10 @@ class GraphArduino:
             self.parent.first_time = True
         else:
             print("Initiated")
+            # self.startGraph(self.graph_type)
             self.worker.start()
-            self.worker.update_sinyal.connect(self.graphUpdate) # dipassingkan dengan nama "sinyal"
-            self.worker.waktu.connect(self.waktu_sinyal) # dipasingkan dengan nama "waktu"
+            self.worker.update_sinyal.connect(self.graphUpdate)
+            self.worker.waktu.connect(self.waktu_sinyal)
             self.parent.first_time = False
 
 
@@ -148,7 +149,6 @@ class GraphArduino:
 
             self.worker.running = False
             self.plot_widget.clear()
-            print("after disconnecting")
             # reset all the arrays
             self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
             self.arr_average= [] # rata-rata
@@ -360,16 +360,16 @@ class WorkerThread(QtCore.QThread):
 
     def __init__(self):
         super().__init__()
-        self.running = True
+        self.running = False
         # self.update_sinyal   =pyqtSignal(object) # mengirimkan self.array dari "emit()"
         # self.waktu           =pyqtSignal(float) # mengirimkan delay dari "emit()"
         self.arduino_data    =None
         try:
             self.arduino_data    =serial_arduino() # berasal dari function yang mencari COM PORT
-            self.running = False
+            # self.running = True
         except:
             self.arduino_data = None
-            self.running = False
+            # self.running = False
 
     def getArduinoData(self):
         return self.arduino_data
