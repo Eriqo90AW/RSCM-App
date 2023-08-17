@@ -11,6 +11,7 @@ class GraphLogic:
         self.currentGraph = "main"
         self.first_time = True
         self.user = None
+        self.is_loading = False
 
         self.graph = GraphArduino(self)
 
@@ -53,6 +54,9 @@ class GraphLogic:
             self.graph.initGraph()
             # return
         if not self.first_time:
+            if self.is_loading:
+                self.main_window.ui.button_graph_start.setText("Load can't be paused")
+                return
             if self.paused: # if started
                 self.graph.clearGraph()
                 self.graph.startGraph(self.currentGraph)
