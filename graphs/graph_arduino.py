@@ -96,6 +96,7 @@ class GraphArduino:
 
             if(arduino_data == None and read_mode == "arduino"):  # if the COM port is not detected
                 self.parent.first_time = True
+                self.worker = None
                 return
         
         print("Initiated")
@@ -103,14 +104,25 @@ class GraphArduino:
         self.worker.update_sinyal.connect(self.graphUpdate)
         self.worker.waktu.connect(self.waktu_sinyal)
         self.parent.first_time = False
+        # self.disconnected = True
 
 
     # method to start the graph
     def startGraph(self, graph_type):
+        # print("this is CALLED", self.worker.is_paused)
+        if self.worker.finish_load:
+            self.worker.read_mode = "arduino"
+            if self.worker.arduino_data == None:  # if the COM port is not detected
+                arduino_data, read_mode = self.worker.getArduinoData() # get data from WorkerThread instance
+                if(arduino_data == None and read_mode == "arduino"):  # if the COM port is not detected
+                    return
+
         # to restart the graph after pausing
-        if self.worker.running == False:
-            self.worker.running = True
-            self.worker.start()
+        if self.worker.is_paused:
+            # print("resume")
+            # self.worker.running = True
+            # self.worker.run()
+            self.worker.resume()
             self.worker.update_sinyal.connect(self.graphUpdate)
             self.worker.waktu.connect(self.waktu_sinyal)
             self.disconnected = False
@@ -134,6 +146,8 @@ class GraphArduino:
             for i in range(1, self.banyak_sensor+1):
                 if self.graph_type == 'Sensor %d'%i:
                     self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.arr_sensors["arr_sensor%d"%i], name="Sensor %d"%i, pen=self.pens["pen%d"%i])} )
+        
+        # self.disconnected = False
 
     # method to clear the graph
     def clearGraph(self):
@@ -144,37 +158,49 @@ class GraphArduino:
         if self.parent.first_time:
             pass
         else:
-            self.worker.running = False
+            self.worker.pause()
+            # self.worker.running = False
 
     # method to stop the graph
     def stopGraph(self):
+        print("Before ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
         if self.parent.first_time:
             return
+        if self.load_mode == True and self.worker.finish_load == False:
+            self.parent.paused = False
+            self.parent.reset = False
+            self.parent.main_window.ui.button_graph_start.setText("Load can't be paused")
+            self.parent.main_window.ui.button_graph_stop.setText("Reset After Loading")
+            return
+
         if self.worker.finish_load:
             self.load_mode = False
 
             # Reset start button to normal
             self.parent.is_loading = False
             self.parent.main_window.ui.button_graph_start.setText("Start")
+            self.parent.main_window.ui.button_graph_stop.setText("Reset")
             self.parent.paused = True
 
-            self.worker.finish_load = False
-            self.parent.first_time = True
-            self.plot_widget.clear()
-            self.arrayReset()
+            # self.worker.finish_load = False
+            # self.parent.first_time = True
+            # self.clearGraph
+            # self.arrayReset()
             # return
 
-        if self.worker.running:
-            # Set a flag to indicate that disconnection is happening
-            self.disconnected = True
-            # Disconnect the signals
-            self.worker.update_sinyal.disconnect(self.graphUpdate)
-            self.worker.waktu.disconnect(self.waktu_sinyal)
+        # if self.worker.is_paused == False:
+        # Set a flag to indicate that disconnection is happening
+        self.disconnected = True
+        # Disconnect the signals
+        self.worker.update_sinyal.disconnect(self.graphUpdate)
+        self.worker.waktu.disconnect(self.waktu_sinyal)
 
-            self.worker.running = False
-            self.plot_widget.clear()
-            
-            self.arrayReset()
+        # self.worker.running = False
+        self.worker.pause()
+        self.clearGraph()
+        
+        self.arrayReset()
+        # print("After ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
             
     def arrayReset(self):
         # reset all the arrays
@@ -220,8 +246,15 @@ class GraphArduino:
 
     
     def loadGraph(self):
+        if self.parent.first_time:
+            self.parent.first_time = False
         if self.worker != None:
-            self.parent.stopButton()
+            # self.parent.stopButton()
+            # self.parent.paused = False
+            # self.parent.reset = False
+            self.clearGraph()
+            # self.parent.statsClear()
+            # self.arrayReset()
         current_directory = os.path.join(os.path.dirname(__file__), "..", "archive")
         filenames, ignore=QFileDialog.getOpenFileNames(self.parent.main_window, 'Open file', current_directory)
         if filenames:
@@ -239,10 +272,11 @@ class GraphArduino:
             # Show the message box and wait for a response
             dialog.show()
             QCoreApplication.processEvents()
-
             self.load_mode = True
             self.parent.is_loading = True
             if self.worker != None:
+                # self.worker.running = False
+                self.worker.finish_load = False
                 self.worker.read_mode = "load"
                 data = self.readGraph(*filenames)
                 self.worker.setLoadedData(data)
@@ -250,15 +284,17 @@ class GraphArduino:
                 self.startGraph(self.parent.currentGraph)
             else:
                 self.initGraph()
-                self.startGraph(self.parent.currentGraph)
+                self.worker.is_paused = True
                 data = self.readGraph(*filenames)
                 self.worker.setLoadedData(data)
+                self.startGraph(self.parent.currentGraph)
             self.parent.main_window.ui.button_graph_start.setText("Pause")
             self.parent.paused = False
             dialog.close()
         
 
     def readGraph(self, filename):
+        data = None
         with open(filename, "r") as f:
             json_string = f.read()
 
@@ -375,7 +411,7 @@ def serial_arduino():
     QCoreApplication.processEvents()
 
     # mencari COM port secara otomatis dengan percobaan sebanyak 5 kali
-    for i in range(1):######
+    for i in range(1):
         for coba_port in range(1, 11): #mencari COM port dari 0-10 (default
             try:
                 data_serial =serial.Serial('com%d'%coba_port, 115200) 
@@ -421,6 +457,7 @@ class WorkerThread(QtCore.QThread):
 
     update_sinyal   =pyqtSignal(object) # mengirimkan self.array dari "emit()"
     waktu           =pyqtSignal(float) # mengirimkan delay dari "emit()"
+    paused = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -431,9 +468,8 @@ class WorkerThread(QtCore.QThread):
         self.loaded_data = None
         self.array = []
         self.banyak_sensor = 9
-
-        # get data from arduino
-        # self.getArduinoData()
+        self.mutex = QMutex()
+        self.is_paused = False
 
     def getArduinoData(self):
         if self.read_mode == "arduino":
@@ -452,7 +488,14 @@ class WorkerThread(QtCore.QThread):
     def run(self):
         print("Thread Started")
         # Reading data from serial port
-        while self.running: # default
+        while True: # default
+            with QMutexLocker(self.mutex):
+                while self.is_paused:
+                    self.paused.emit()
+                    self.mutex.unlock()
+                    time.sleep(1)  # Sleep while paused
+                    self.mutex.lock()
+
             if self.read_mode == "arduino":
                 if self.arduino_data.inWaiting: # default
                     c     = time.time()# waktu sebelum mulai
@@ -485,8 +528,16 @@ class WorkerThread(QtCore.QThread):
                         else:
                             self.waktu.emit((self.loaded_data["time_recorded"][time_index + 1] - self.loaded_data["time_recorded"][time_index])/2)
                     self.finish_load = True
+                    self.pause()
                     # self.update_sinyal.emit(self.array)
-                    return
+                    
+    def pause(self):
+        with QMutexLocker(self.mutex):
+            self.is_paused = True
+
+    def resume(self):
+        with QMutexLocker(self.mutex):
+            self.is_paused = False
             
 
     
