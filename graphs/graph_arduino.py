@@ -81,6 +81,7 @@ class GraphArduino:
     def initGraph(self):
         # create an instance of class WorkerThread
         self.worker = WorkerThread()
+        self.worker.banyak_sensor = self.banyak_sensor # sync the number of sensors
 
         # get data from loaded data
         if self.load_mode == True:
@@ -113,6 +114,7 @@ class GraphArduino:
             if self.worker.arduino_data == None:  # if the COM port is not detected
                 arduino_data, read_mode = self.worker.getArduinoData() # get data from WorkerThread instance
                 if(arduino_data == None and read_mode == "arduino"):  # if the COM port is not detected
+                    self.parent.main_window.ui.button_graph_start.setText("Start")
                     return
 
         # to resume the graph after pausing
@@ -405,7 +407,7 @@ def serial_arduino():
     QCoreApplication.processEvents()
 
     # mencari COM port secara otomatis dengan percobaan sebanyak 5 kali
-    for i in range(1):
+    for i in range(3):
         for coba_port in range(1, 11): #mencari COM port dari 0-10 (default
             try:
                 data_serial =serial.Serial('com%d'%coba_port, 115200) 

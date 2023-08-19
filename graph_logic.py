@@ -57,8 +57,8 @@ class GraphLogic:
                 return
             if self.paused: # if started
                 self.graph.clearGraph()
-                self.graph.startGraph(self.currentGraph)
                 self.main_window.ui.button_graph_start.setText("Pause")
+                self.graph.startGraph(self.currentGraph)
                 self.paused = False
             elif self.paused == False: # if paused
                 self.graph.pauseGraph()
