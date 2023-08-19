@@ -104,12 +104,17 @@ class GraphArduino:
         self.worker.update_sinyal.connect(self.graphUpdate)
         self.worker.waktu.connect(self.waktu_sinyal)
         self.parent.first_time = False
+        self.worker.is_paused = True
         # self.disconnected = True
 
 
     # method to start the graph
     def startGraph(self, graph_type):
         # print("this is CALLED", self.worker.is_paused)
+        if self.worker == None:
+            self.initGraph()
+            self.startGraph(graph_type)
+            return
         if self.worker.finish_load:
             self.worker.read_mode = "arduino"
             if self.worker.arduino_data == None:  # if the COM port is not detected
@@ -163,7 +168,7 @@ class GraphArduino:
 
     # method to stop the graph
     def stopGraph(self):
-        print("Before ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
+        # print("Before ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
         if self.parent.first_time:
             return
         if self.load_mode == True and self.worker.finish_load == False:
@@ -173,7 +178,7 @@ class GraphArduino:
             self.parent.main_window.ui.button_graph_stop.setText("Reset After Loading")
             return
 
-        if self.worker.finish_load:
+        if self.load_mode and self.worker.finish_load:
             self.load_mode = False
 
             # Reset start button to normal
@@ -182,24 +187,35 @@ class GraphArduino:
             self.parent.main_window.ui.button_graph_stop.setText("Reset")
             self.parent.paused = True
 
+            self.disconnected = True
+            # Disconnect the signals
+            self.worker.update_sinyal.disconnect(self.graphUpdate)
+            self.worker.waktu.disconnect(self.waktu_sinyal)
+
+            # self.worker.running = False
+            self.worker.pause()
+            self.clearGraph()
+            
+            self.arrayReset()
+
             # self.worker.finish_load = False
             # self.parent.first_time = True
             # self.clearGraph
             # self.arrayReset()
             # return
-
+        if self.worker != None and self.worker.is_paused == False:
         # if self.worker.is_paused == False:
         # Set a flag to indicate that disconnection is happening
-        self.disconnected = True
-        # Disconnect the signals
-        self.worker.update_sinyal.disconnect(self.graphUpdate)
-        self.worker.waktu.disconnect(self.waktu_sinyal)
+            self.disconnected = True
+            # Disconnect the signals
+            self.worker.update_sinyal.disconnect(self.graphUpdate)
+            self.worker.waktu.disconnect(self.waktu_sinyal)
 
-        # self.worker.running = False
-        self.worker.pause()
-        self.clearGraph()
-        
-        self.arrayReset()
+            # self.worker.running = False
+            self.worker.pause()
+            self.clearGraph()
+            
+            self.arrayReset()
         # print("After ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
             
     def arrayReset(self):
@@ -246,13 +262,16 @@ class GraphArduino:
 
     
     def loadGraph(self):
+        if self.load_mode == True:
+            return
         if self.parent.first_time:
             self.parent.first_time = False
         if self.worker != None:
-            # self.parent.stopButton()
+            # pass
+            self.parent.stopButton()
             # self.parent.paused = False
-            # self.parent.reset = False
-            self.clearGraph()
+            self.parent.reset = False
+            # self.clearGraph()
             # self.parent.statsClear()
             # self.arrayReset()
         current_directory = os.path.join(os.path.dirname(__file__), "..", "archive")
@@ -278,15 +297,15 @@ class GraphArduino:
                 # self.worker.running = False
                 self.worker.finish_load = False
                 self.worker.read_mode = "load"
-                data = self.readGraph(*filenames)
-                self.worker.setLoadedData(data)
+                data, time = self.readGraph(*filenames)
+                self.worker.setLoadedData(data, time)
                 self.arrayReset()
                 self.startGraph(self.parent.currentGraph)
             else:
                 self.initGraph()
-                self.worker.is_paused = True
-                data = self.readGraph(*filenames)
-                self.worker.setLoadedData(data)
+                # self.worker.is_paused = True
+                data, time = self.readGraph(*filenames)
+                self.worker.setLoadedData(data, time)
                 self.startGraph(self.parent.currentGraph)
             self.parent.main_window.ui.button_graph_start.setText("Pause")
             self.parent.paused = False
@@ -300,7 +319,27 @@ class GraphArduino:
 
         # Parse the JSON string using json.loads()
         data = json.loads(json_string)
-        return data
+        banyak_sensor = 0
+        sensor_array = []
+        time_array = []
+
+        # Find the number of sensors
+        for key in data:
+            if key != "time_recorded":
+                banyak_sensor += 1
+
+        # Parse data into sensor array
+        for time_index, _ in enumerate(data["time_recorded"]):
+            temp = []
+            for no_sensor in range(1, banyak_sensor+1):
+                temp.append(data[f"sensor{no_sensor}"][time_index])
+            if time_index == 0:
+                time_array.append(0)
+            else:
+                time_array.append(data["time_recorded"][time_index] - data["time_recorded"][time_index - 1])
+            sensor_array.append(temp)
+
+        return sensor_array, time_array
        
 
     # function untuk update waktu terbaru
@@ -310,7 +349,7 @@ class GraphArduino:
         # print("transfer detik:", waktu)
 
     def max_min_avg(self, sensor_num=0):
-        if not self.parent.isReset():
+        if not self.parent.reset:
             if self.graph_type == 'main':
                 for i in range (1, self.banyak_sensor+1):
                     max= np.max(self.arr_sensors["arr_sensor%d"%i])
@@ -465,7 +504,8 @@ class WorkerThread(QtCore.QThread):
         self.read_mode = "arduino"
         self.finish_load = False
         self.arduino_data = None
-        self.loaded_data = None
+        self.loaded_sensors = None
+        self.loaded_time = None
         self.array = []
         self.banyak_sensor = 9
         self.mutex = QMutex()
@@ -481,8 +521,9 @@ class WorkerThread(QtCore.QThread):
             self.arduino_data = None
         return self.arduino_data, self.read_mode
     
-    def setLoadedData(self, data):
-        self.loaded_data = data
+    def setLoadedData(self, sensor_array, time_array):
+        self.loaded_sensors = iter(sensor_array)
+        self.loaded_time = iter(time_array)
 
   # Function which is executed by the thread (must be named 'run')
     def run(self):
@@ -516,20 +557,32 @@ class WorkerThread(QtCore.QThread):
                     self.waktu.emit(delay) 
                     # ("thread detik:", delay)
             else:
-                if self.loaded_data != None:
-                    for time_index in range(len(self.loaded_data["time_recorded"])):
-                        self.array = []
-                        for no_sensor in range(1, self.banyak_sensor+1):
-                            self.array.append(self.loaded_data[f"sensor{no_sensor}"][time_index])
-                        self.update_sinyal.emit(self.array)
-                        time.sleep(0.05)
-                        if time_index == len(self.loaded_data["time_recorded"])-1:
-                            self.waktu.emit(0)
-                        else:
-                            self.waktu.emit((self.loaded_data["time_recorded"][time_index + 1] - self.loaded_data["time_recorded"][time_index])/2)
-                    self.finish_load = True
-                    self.pause()
+                if self.loaded_time != None:
+                    # for time_index in range(len(self.loaded_data["time_recorded"])):
+                    #     self.array = []
+                    #     for no_sensor in range(1, self.banyak_sensor+1):
+                    #         self.array.append(self.loaded_data[f"sensor{no_sensor}"][time_index])
+                    #     self.update_sinyal.emit(self.array)
+                    #     time.sleep(0.05)
+                    #     if time_index == len(self.loaded_data["time_recorded"])-1:
+                    #         self.waktu.emit(0)
+                    #     else:
+                    #         self.waktu.emit((self.loaded_data["time_recorded"][time_index + 1] - self.loaded_data["time_recorded"][time_index])/2)
+                    # # self.finish_load = True
+                    # self.pause()
                     # self.update_sinyal.emit(self.array)
+                    try:
+                        next(self.loaded_sensors)
+                        cur_sensors = next(self.loaded_sensors)
+                        cur_time = next(self.loaded_time)
+                        time.sleep(0.05)
+                        self.update_sinyal.emit(cur_sensors)
+                        self.waktu.emit(cur_time/2)
+                        next(self.loaded_time)
+                    except StopIteration:
+                        self.finish_load = True
+                        self.loaded_time = None
+                        self.pause()
                     
     def pause(self):
         with QMutexLocker(self.mutex):

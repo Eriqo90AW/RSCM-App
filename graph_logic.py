@@ -132,9 +132,6 @@ class GraphLogic:
         self.main_window.ui.label_graph_min.setText(f"Min : {0} mm")
         self.main_window.ui.label_graph_avg.setText(f"Average : {0} mm")
 
-    def isReset(self):
-        return self.reset
-
 # utilities functions
 def capitalize_first_letter(word):
     if len(word) > 0:
