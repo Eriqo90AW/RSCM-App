@@ -36,8 +36,6 @@ class GraphLogic:
         first_item.setEnabled(False) # disable the first option in combo box
         self.main_window.ui.combo_graph_sensors.currentIndexChanged.connect(lambda: self.sensorsGraphInit())
 
-        # self.main_window.ui.button_login_exit.clicked.connect(lambda: self.printData())
-
     # method to connect the close event to the method (called by login.py)
     def initPatient(self):
         self.user = capitalize_first_letter(self.main_window.current_patient['nama'])

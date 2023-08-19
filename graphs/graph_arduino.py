@@ -105,12 +105,9 @@ class GraphArduino:
         self.worker.waktu.connect(self.waktu_sinyal)
         self.parent.first_time = False
         self.worker.is_paused = True
-        # self.disconnected = True
-
 
     # method to start the graph
     def startGraph(self, graph_type):
-        # print("this is CALLED", self.worker.is_paused)
         if self.worker == None:
             self.initGraph()
             self.startGraph(graph_type)
@@ -124,9 +121,6 @@ class GraphArduino:
 
         # to restart the graph after pausing
         if self.worker.is_paused:
-            # print("resume")
-            # self.worker.running = True
-            # self.worker.run()
             self.worker.resume()
             self.worker.update_sinyal.connect(self.graphUpdate)
             self.worker.waktu.connect(self.waktu_sinyal)
@@ -151,8 +145,6 @@ class GraphArduino:
             for i in range(1, self.banyak_sensor+1):
                 if self.graph_type == 'Sensor %d'%i:
                     self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.arr_sensors["arr_sensor%d"%i], name="Sensor %d"%i, pen=self.pens["pen%d"%i])} )
-        
-        # self.disconnected = False
 
     # method to clear the graph
     def clearGraph(self):
@@ -164,11 +156,9 @@ class GraphArduino:
             pass
         else:
             self.worker.pause()
-            # self.worker.running = False
 
     # method to stop the graph
     def stopGraph(self):
-        # print("Before ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
         if self.parent.first_time:
             return
         if self.load_mode == True and self.worker.finish_load == False:
@@ -198,25 +188,17 @@ class GraphArduino:
             
             self.arrayReset()
 
-            # self.worker.finish_load = False
-            # self.parent.first_time = True
-            # self.clearGraph
-            # self.arrayReset()
-            # return
         if self.worker != None and self.worker.is_paused == False:
-        # if self.worker.is_paused == False:
-        # Set a flag to indicate that disconnection is happening
+            # Set a flag to indicate that disconnection is happening
             self.disconnected = True
             # Disconnect the signals
             self.worker.update_sinyal.disconnect(self.graphUpdate)
             self.worker.waktu.disconnect(self.waktu_sinyal)
 
-            # self.worker.running = False
             self.worker.pause()
             self.clearGraph()
             
             self.arrayReset()
-        # print("After ", self.parent.first_time, self.load_mode, self.worker.finish_load, self.worker.is_paused)
             
     def arrayReset(self):
         # reset all the arrays
@@ -262,18 +244,16 @@ class GraphArduino:
 
     
     def loadGraph(self):
+        # prevent loading while loading
         if self.load_mode == True:
             return
+        # flag to indicate it is not the first time loading
         if self.parent.first_time:
             self.parent.first_time = False
+        # if there is a graph running, stop it
         if self.worker != None:
-            # pass
             self.parent.stopButton()
-            # self.parent.paused = False
             self.parent.reset = False
-            # self.clearGraph()
-            # self.parent.statsClear()
-            # self.arrayReset()
         current_directory = os.path.join(os.path.dirname(__file__), "..", "archive")
         filenames, ignore=QFileDialog.getOpenFileNames(self.parent.main_window, 'Open file', current_directory)
         if filenames:
@@ -293,17 +273,17 @@ class GraphArduino:
             QCoreApplication.processEvents()
             self.load_mode = True
             self.parent.is_loading = True
+            # case when the graph has been initialized
             if self.worker != None:
-                # self.worker.running = False
                 self.worker.finish_load = False
                 self.worker.read_mode = "load"
                 data, time = self.readGraph(*filenames)
                 self.worker.setLoadedData(data, time)
                 self.arrayReset()
                 self.startGraph(self.parent.currentGraph)
+            # case when the graph has not been initialized
             else:
                 self.initGraph()
-                # self.worker.is_paused = True
                 data, time = self.readGraph(*filenames)
                 self.worker.setLoadedData(data, time)
                 self.startGraph(self.parent.currentGraph)
@@ -346,9 +326,8 @@ class GraphArduino:
     def waktu_sinyal(self, waktu): 
         # argument "waktu" berasal dari self.worker.waktu.connect()
         self.current_time +=waktu # delay arduino dijadikan pergerakan grafik sumbu 
-        # print("transfer detik:", waktu)
 
-    def max_min_avg(self, sensor_num=0):
+    def max_min_avg(self):
         if not self.parent.reset:
             if self.graph_type == 'main':
                 for i in range (1, self.banyak_sensor+1):
@@ -494,8 +473,8 @@ def show_popup(message, title):
 # Threading Class
 class WorkerThread(QtCore.QThread):
 
-    update_sinyal   =pyqtSignal(object) # mengirimkan self.array dari "emit()"
-    waktu           =pyqtSignal(float) # mengirimkan delay dari "emit()"
+    update_sinyal = pyqtSignal(object) # mengirimkan self.array dari "emit()"
+    waktu = pyqtSignal(float) # mengirimkan delay dari "emit()"
     paused = pyqtSignal()
 
     def __init__(self):
@@ -522,6 +501,7 @@ class WorkerThread(QtCore.QThread):
         return self.arduino_data, self.read_mode
     
     def setLoadedData(self, sensor_array, time_array):
+        # save the data as an iterator
         self.loaded_sensors = iter(sensor_array)
         self.loaded_time = iter(time_array)
 
@@ -539,38 +519,21 @@ class WorkerThread(QtCore.QThread):
 
             if self.read_mode == "arduino":
                 if self.arduino_data.inWaiting: # default
-                    c     = time.time()# waktu sebelum mulai
+                    start = time.time()# waktu sebelum mulai
                     data_paket  = self.arduino_data.readline() # membaca output arduino
-                    #b' = bytes ;\r\n =newline berasal dari println
 
                     data_paket  = data_paket.decode("utf-8").strip('\r\n')  # agar menghilangkan dummy simbol
-                    #data_paket  = data_paket.replace(":", '')
                     data_paket  = data_paket.replace("Out of range", '600') # out of range diganti dengan 500
                     data_paket  = data_paket.replace("8191", '600') 
                     split_data  = data_paket.split(" ") # pemisah antar bilangan dengan spasi
                     
                     self.array  = list(map(int, split_data)) # mengubah array tipe string ke array bilangangrafik_18_02.py
-                    #print("-----------------------------")
                     self.update_sinyal.emit(self.array) #mengirimkan sinyal
 
-                    delay  = round(time.time()-c, 3) # selisih waktu
-                    self.waktu.emit(delay) 
-                    # ("thread detik:", delay)
+                    delay  = round(time.time() - start, 3) # selisih waktu
+                    self.waktu.emit(delay) #mengirimkan delay
             else:
                 if self.loaded_time != None:
-                    # for time_index in range(len(self.loaded_data["time_recorded"])):
-                    #     self.array = []
-                    #     for no_sensor in range(1, self.banyak_sensor+1):
-                    #         self.array.append(self.loaded_data[f"sensor{no_sensor}"][time_index])
-                    #     self.update_sinyal.emit(self.array)
-                    #     time.sleep(0.05)
-                    #     if time_index == len(self.loaded_data["time_recorded"])-1:
-                    #         self.waktu.emit(0)
-                    #     else:
-                    #         self.waktu.emit((self.loaded_data["time_recorded"][time_index + 1] - self.loaded_data["time_recorded"][time_index])/2)
-                    # # self.finish_load = True
-                    # self.pause()
-                    # self.update_sinyal.emit(self.array)
                     try:
                         next(self.loaded_sensors)
                         cur_sensors = next(self.loaded_sensors)
