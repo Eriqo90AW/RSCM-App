@@ -167,7 +167,6 @@ class GraphArduino:
             self.load_mode = False
 
             # Reset start button to normal
-            self.parent.is_loading = False
             self.parent.main_window.ui.button_graph_start.setText("Start")
             self.parent.main_window.ui.button_graph_stop.setText("Reset")
             self.parent.paused = True
@@ -255,7 +254,6 @@ class GraphArduino:
             dialog.show()
             QCoreApplication.processEvents()
             self.load_mode = True
-            self.parent.is_loading = True
             # case when the graph has been initialized
             if self.worker != None:
                 self.worker.finish_load = False
