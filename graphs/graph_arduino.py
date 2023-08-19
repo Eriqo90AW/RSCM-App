@@ -1,41 +1,36 @@
-import pyqtgraph as pg
-import numpy as np
 from PyQt5 import QtCore
-import serial.tools.list_ports
-import time
-import serial
-import numpy as np
 from PyQt5.QtCore import * 
 from PyQt5.QtWidgets import *
-import datetime
-import json
-import numpy.typing as nt
 from PyQt5.QtCore import QCoreApplication
+import pyqtgraph as pg
+import serial.tools.list_ports
+import serial
+import numpy as np
+import datetime
+import time
+import json
 import os
 
 class GraphArduino:
     def __init__(self, parent):
         self.parent = parent
         self.mode = "normal"
-        self.testing = False
         self.counter = 0
         self.disconnected = False
-        self.max_value = 700
-        self.target_score = 300
         self.load_mode = False
         self.worker = None
         self.graph_type = "main"
-        self.banyak_sensor=9 # jumlah sensor 9 buah
-        self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
+        self.max_value = 700 # change this to change the max value of the y axis
+        self.target_score = 300 # change this to change the target score
+        self.banyak_sensor = 9 # change this to change the number of sensors
 
+        self.time_recorded  = [] # initialize the array for the x axis (time)
         #---Inisiasi awal untuk sumbu Y-----
         self.arr_target = [] # target
         self.arr_average= [] # rata-rata
-        #arr_sensor1
         self.arr_sensors={"arr_sensor1": [], "arr_sensor2": [], "arr_sensor3": [],
          "arr_sensor4": [], "arr_sensor5": [], "arr_sensor6":[], 
          "arr_sensor7": [],"arr_sensor8": [], "arr_sensor9": []}
-        #------------------------------------------------------------------------
         
         self.current_time  = 0 # pegerakan awal sumbu X ( Waktu akan di increment pada "def waktu_sinyal()"" ) 
         self.duration      = round(1000) #1000 milisekon/frame per second
@@ -76,20 +71,22 @@ class GraphArduino:
         "pen4":self.pen4, "pen5": self.pen5, "pen6": self.pen6, 
         "pen7": self.pen7, "pen8": self.pen8, "pen9": self.pen9}
 
-        #-------------------------------------------------------
         self.curve={} # nanti curve di append ke sini
-        #-------------
+
         self.plot_widget.addLegend() # add legend to the graph
         self.plot_widget.getViewBox().setMouseEnabled(x=True, y=True) # enable zooming and panning
            
     
-    # method untuk menginisialisasi grafik
+    # method to initialize the graph
     def initGraph(self):
         # create an instance of class WorkerThread
         self.worker = WorkerThread()
 
+        # get data from loaded data
         if self.load_mode == True:
             self.worker.read_mode = "load"
+
+        # get data from arduino
         else:
             self.worker.read_mode = "arduino"
             arduino_data, read_mode = self.worker.getArduinoData() # get data from WorkerThread instance
@@ -102,7 +99,6 @@ class GraphArduino:
         print("Initiated")
         self.worker.start()
         self.worker.update_sinyal.connect(self.graphUpdate)
-        self.worker.waktu.connect(self.waktu_sinyal)
         self.parent.first_time = False
         self.worker.is_paused = True
 
@@ -119,11 +115,9 @@ class GraphArduino:
                 if(arduino_data == None and read_mode == "arduino"):  # if the COM port is not detected
                     return
 
-        # to restart the graph after pausing
+        # to resume the graph after pausing
         if self.worker.is_paused:
             self.worker.resume()
-            self.worker.update_sinyal.connect(self.graphUpdate)
-            self.worker.waktu.connect(self.waktu_sinyal)
             self.disconnected = False
 
         self.graph_type = graph_type
@@ -135,7 +129,6 @@ class GraphArduino:
         if self.graph_type == 'main':
             for i in range(1, self.banyak_sensor+1):
                 self.curve.update( {"curve%d"%i: self.plot_widget.plot(self.time_recorded, self.arr_sensors["arr_sensor%d"%i],name="Sensor %d"%i, pen=self.pens["pen%d"%i])} )
-            #-----------------------------------
           
         elif self.graph_type == 'average':
             self.curve_avg  = self.plot_widget.plot(self.time_recorded,self.arr_average, name="Average", pen=self.penavg)
@@ -177,29 +170,19 @@ class GraphArduino:
             self.parent.main_window.ui.button_graph_stop.setText("Reset")
             self.parent.paused = True
 
+            # Set a flag to indicate that disconnection is happening
             self.disconnected = True
-            # Disconnect the signals
-            self.worker.update_sinyal.disconnect(self.graphUpdate)
-            self.worker.waktu.disconnect(self.waktu_sinyal)
-
-            # self.worker.running = False
             self.worker.pause()
-            self.clearGraph()
-            
-            self.arrayReset()
 
         if self.worker != None and self.worker.is_paused == False:
             # Set a flag to indicate that disconnection is happening
             self.disconnected = True
-            # Disconnect the signals
-            self.worker.update_sinyal.disconnect(self.graphUpdate)
-            self.worker.waktu.disconnect(self.waktu_sinyal)
-
             self.worker.pause()
-            self.clearGraph()
-            
-            self.arrayReset()
-            
+
+        self.clearGraph()    
+        self.arrayReset()
+    
+    # method to reset all the arrays
     def arrayReset(self):
         # reset all the arrays
         self.time_recorded  = [] #sumbu X (menyimpan waktu berjalan)\
@@ -211,23 +194,21 @@ class GraphArduino:
         self.current_time  = 0 # pegerakan awal sumbu X ( Waktu akan di increment pada "def waktu_sinyal()"" ) 
         self.curve={} # nanti curve di append ke sini
 
+    # method to save the graph
     def saveGraph(self):
         if len(self.arr_average) != 0:
             print("Saving Graph...")
-            self.pauseGraph()
-            self.parent.main_window.ui.button_graph_start.setText("Start")
-            self.parent.paused = True # simulating pressing the pause button
 
-            seluruh_sensor, average= self.arr_sensors,self.arr_average
+            seluruh_sensor = self.arr_sensors
             user = self.parent.user
 
-            date = datetime.datetime.now().strftime("%H.%M_%d-%m-%Y")
+            date = datetime.datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
             final_format = f"{user}_{date}"
 
             data = {'time_recorded': self.time_recorded}
 
-            for i in range(1, len(seluruh_sensor)+1):
-                data.update({'sensor%d'%i: seluruh_sensor["arr_sensor%d"%i] })
+            for i in range(1, self.banyak_sensor+1):
+                data.update({f'sensor{i}': seluruh_sensor[f"arr_sensor{i}"] })
 
             # Construct the path to the "archive" folder
             archive_folder = os.path.join(os.path.dirname(__file__), "..", "archive")
@@ -242,7 +223,7 @@ class GraphArduino:
             
             show_popup("Saved Successfully", "Saving")
 
-    
+    # method to load the graph    
     def loadGraph(self):
         # prevent loading while loading
         if self.load_mode == True:
@@ -291,7 +272,7 @@ class GraphArduino:
             self.parent.paused = False
             dialog.close()
         
-
+    # method to read the graph from a JSON file
     def readGraph(self, filename):
         data = None
         with open(filename, "r") as f:
@@ -299,6 +280,8 @@ class GraphArduino:
 
         # Parse the JSON string using json.loads()
         data = json.loads(json_string)
+
+        # initialize local variables
         banyak_sensor = 0
         sensor_array = []
         time_array = []
@@ -308,7 +291,7 @@ class GraphArduino:
             if key != "time_recorded":
                 banyak_sensor += 1
 
-        # Parse data into sensor array
+        # Parse data into sensor array and time array
         for time_index, _ in enumerate(data["time_recorded"]):
             temp = []
             for no_sensor in range(1, banyak_sensor+1):
@@ -320,13 +303,8 @@ class GraphArduino:
             sensor_array.append(temp)
 
         return sensor_array, time_array
-       
 
-    # function untuk update waktu terbaru
-    def waktu_sinyal(self, waktu): 
-        # argument "waktu" berasal dari self.worker.waktu.connect()
-        self.current_time +=waktu # delay arduino dijadikan pergerakan grafik sumbu 
-
+    # method to calculate the max, min, and average of the graph
     def max_min_avg(self):
         if not self.parent.reset:
             if self.graph_type == 'main':
@@ -355,10 +333,18 @@ class GraphArduino:
         else:
             self.parent.statsClear()
 
-    # Funtion untuk update grafik tiap waktu  
-    def graphUpdate(self, sinyal):
+    # method to update all the arrays
+    def update_sensor(self, sinyal):
+        self.arr_average.append(round(np.average(sinyal)) ) #average dua digit desimal
+        self.arr_target.append(self.target_score) # update target
+
+        for i in range(1, self.banyak_sensor+1):
+           self.arr_sensors[f"arr_sensor{i}"].append(sinyal[i-1]) # update tiap sensor
+
+    # method to update the graph (looping)
+    def graphUpdate(self, sinyal, delay):
+        self.current_time += delay # delay arduino dijadikan pergerakan grafik sumbu
         if not self.disconnected:
-            # argument "sinyal" berasal dari self.worker.update_sinyal.connect()
             self.time_recorded.append(self.current_time) # menjadi array untuk sumbu X
             self.update_sensor(sinyal) #agar array sensor tetap ter-update
 
@@ -367,14 +353,14 @@ class GraphArduino:
 
             # update the graph
             if self.graph_type  == 'main':
-                for i in range(1, len(sinyal)+1):
+                for i in range(1, self.banyak_sensor+1):
                     self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
 
             elif self.graph_type == 'average':
                 self.curve_avg.setData(self.time_recorded,self.arr_average)
 
             else:
-                for i in range(1, len(sinyal)+1):
+                for i in range(1, self.banyak_sensor+1):
                     if self.graph_type == 'Sensor %d'%i:
                         self.curve["curve%d"%i].setData(self.time_recorded, self.arr_sensors["arr_sensor%d"%i])
 
@@ -386,18 +372,7 @@ class GraphArduino:
                 self.plot_widget.setXRange(self.time_recorded[-1] - 10, self.time_recorded[-1] + 4)
             self.max_min_avg() # agar stats label tetap ter-update
 
-    # Function untuk menyimpan array "update_sinyal" dari Class WorkerThread
-    def update_sensor(self, sinyal):
-        self.banyak_sensor  = len(sinyal)
-        self.arr_average.append(round(np.average(sinyal)) ) #average dua digit desimal
-        self.arr_target.append(self.target_score) # update target (maksimal 9 sensor
-
-        for i in range(len(sinyal)):
-           self.arr_sensors["arr_sensor%d"%(i+1)].append(sinyal[i]) # update tiap sensor (maksimal 9 sensor)
-
-    def array_sensor(self): # memudahkan memanggil array sensor  database
-        return self.arr_sensors,self.arr_average
-    
+    # method to change the mode of the graph
     def changeMode(self):
         if self.mode == "normal":
             self.mode = "follow"
@@ -406,12 +381,13 @@ class GraphArduino:
         elif self.mode == "default":
             self.mode = "normal"
 
+    # method to handle key press event
     def handleKeyPressEvent(self, ev):
         if ev.key() == pg.QtCore.Qt.Key_Space:
             self.changeMode()
 
 
-# Mendeteksi COM port  Arduino secara otomatis
+# function to find the COM port
 def serial_arduino():
     # Create a QMessageBox widget
     dialog = QMessageBox()
@@ -455,6 +431,7 @@ def serial_arduino():
     data_serial.setDTR(True) #default
     return data_serial # dipassingkan ke class WorkerThread
 
+# function to show a popup
 def show_popup(message, title):
     # Create a QMessageBox widget
     message_box = QMessageBox()
@@ -473,8 +450,7 @@ def show_popup(message, title):
 # Threading Class
 class WorkerThread(QtCore.QThread):
 
-    update_sinyal = pyqtSignal(object) # mengirimkan self.array dari "emit()"
-    waktu = pyqtSignal(float) # mengirimkan delay dari "emit()"
+    update_sinyal = pyqtSignal(object, float) # mengirimkan self.array dari "emit()"
     paused = pyqtSignal()
 
     def __init__(self):
@@ -490,6 +466,7 @@ class WorkerThread(QtCore.QThread):
         self.mutex = QMutex()
         self.is_paused = False
 
+    # method to get data from arduino
     def getArduinoData(self):
         if self.read_mode == "arduino":
             try:
@@ -500,12 +477,13 @@ class WorkerThread(QtCore.QThread):
             self.arduino_data = None
         return self.arduino_data, self.read_mode
     
+    # method to set the loaded data
     def setLoadedData(self, sensor_array, time_array):
         # save the data as an iterator
         self.loaded_sensors = iter(sensor_array)
         self.loaded_time = iter(time_array)
 
-  # Function which is executed by the thread (must be named 'run')
+    # method which is executed by the thread (must be named 'run')
     def run(self):
         print("Thread Started")
         # Reading data from serial port
@@ -519,7 +497,7 @@ class WorkerThread(QtCore.QThread):
 
             if self.read_mode == "arduino":
                 if self.arduino_data.inWaiting: # default
-                    start = time.time()# waktu sebelum mulai
+                    start = time.perf_counter()# waktu sebelum mulai
                     data_paket  = self.arduino_data.readline() # membaca output arduino
 
                     data_paket  = data_paket.decode("utf-8").strip('\r\n')  # agar menghilangkan dummy simbol
@@ -528,32 +506,32 @@ class WorkerThread(QtCore.QThread):
                     split_data  = data_paket.split(" ") # pemisah antar bilangan dengan spasi
                     
                     self.array  = list(map(int, split_data)) # mengubah array tipe string ke array bilangangrafik_18_02.py
-                    self.update_sinyal.emit(self.array) #mengirimkan sinyal
+                    end  = time.perf_counter() # waktu setelah selesai
+                    delay = end - start # delay
+                    print(f"Delay: {delay}")
+                    self.update_sinyal.emit(self.array, delay) #mengirimkan sinyal
 
-                    delay  = round(time.time() - start, 3) # selisih waktu
-                    self.waktu.emit(delay) #mengirimkan delay
+            # Reading data from loaded file
             else:
                 if self.loaded_time != None:
                     try:
-                        next(self.loaded_sensors)
                         cur_sensors = next(self.loaded_sensors)
                         cur_time = next(self.loaded_time)
-                        time.sleep(0.05)
-                        self.update_sinyal.emit(cur_sensors)
-                        self.waktu.emit(cur_time/2)
-                        next(self.loaded_time)
+                        print(f"Delay: {cur_time}")
+                        time.sleep(cur_time) # sleep to simulate delay
+                        self.update_sinyal.emit(cur_sensors, cur_time)
                     except StopIteration:
                         self.finish_load = True
                         self.loaded_time = None
                         self.pause()
-                    
+
+    # method to pause the thread          
     def pause(self):
         with QMutexLocker(self.mutex):
             self.is_paused = True
 
+    # method to resume the thread
     def resume(self):
         with QMutexLocker(self.mutex):
             self.is_paused = False
             
-
-    
