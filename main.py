@@ -1,15 +1,14 @@
-from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from final_ui import *
 
 from menu import Menu
 from home import Home
-from setup_db import SetupDB
 from login import Login
 from register import Register
-from database import Database
+from ui_database import DatabasePage
 from graph_logic import GraphLogic
+from database import *
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -20,16 +19,15 @@ class MainWindow(QMainWindow):
             'usia': None,
             'jenis_kelamin': None
         }
+        self.db = Database()
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
         self.menu = Menu(self)
         self.home = Home(self)
-        self.setup_db = SetupDB('db/patient.db')
         self.login = Login(self)
         self.register = Register(self)
-        self.database = Database(self)
         self.graph = GraphLogic(self)
 
 if __name__ == "__main__":
