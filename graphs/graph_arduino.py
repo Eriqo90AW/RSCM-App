@@ -159,7 +159,6 @@ class GraphArduino:
         if self.load_mode == True and self.worker.finish_load == False:
             self.parent.paused = False
             self.parent.reset = False
-            self.parent.main_window.ui.button_graph_start.setText("Load can't be paused")
             self.parent.main_window.ui.button_graph_stop.setText("Reset After Loading")
             return
 
