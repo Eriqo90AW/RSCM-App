@@ -18,6 +18,7 @@ class Login:
         patient = self.main_window.db.getPatient(self.id)
         if patient:
             self.savePatient(patient)
+            self.main_window.graph.initPatient()
             self.main_window.ui.stackedWidget.setCurrentIndex(4)
         else:
             self.show_popup()
