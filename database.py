@@ -201,6 +201,8 @@ class Database:
             data = data.id
         elif isinstance(data, dict):
             data = data["id"]
+        elif isinstance(data, tuple) or isinstance(data, list):
+            data = data[0]
         q = "SELECT * FROM patient WHERE id = ?"
         self.cur.execute(q, (data,))
         return True if self.cur.fetchone() else False
@@ -222,8 +224,12 @@ class Database:
             data = data.toList()
         elif isinstance(data, dict):
             data = list(data.values())
+        data[0] = int(data[0])
+        data[2] = int(data[2])
+        data = data[1:] + [data[0]]
+        print(data)
         q = "UPDATE patient SET name = ?, age = ?, gender = ? WHERE id = ?"
-        self.cur.execute(q, (data[1:], data[0]))
+        self.cur.execute(q, data)
         self.con.commit()
 
     @query
@@ -232,6 +238,8 @@ class Database:
             data = data.id
         elif isinstance(data, dict):
             data = data["id"]
+        elif isinstance(data, list) or isinstance(data, tuple):
+            data = data[0]
         q = "DELETE FROM patient WHERE id = ?"
         self.cur.execute(q, (data,))
         self.con.commit()
@@ -248,6 +256,8 @@ class Database:
             data = data.id
         elif isinstance(data, dict):
             data = data["id"]
+        elif isinstance(data, tuple) or isinstance(data, list):
+            data = data[0]
         q = "SELECT * FROM patient WHERE id = ?"
         self.cur.execute(q, (data,))
         return self.cur.fetchone()

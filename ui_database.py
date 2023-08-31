@@ -24,6 +24,10 @@ class EditButtons(QtWidgets.QWidget):
         button.clicked.connect(self.buttonClicked)
         button.setObjectName("select")
         self.buttons.append(button)
+        button = QtWidgets.QPushButton("Edit")
+        button.clicked.connect(self.buttonClicked)
+        button.setObjectName("edit")
+        self.buttons.append(button)
         button = QtWidgets.QPushButton("Delete")
         button.clicked.connect(self.buttonClicked)
         button.setObjectName("delete")
@@ -65,6 +69,7 @@ class PatientTable(QtWidgets.QTableWidget):
         self.setHorizontalHeaderLabels(["ID", "Name", "Age", "Gender", " "])
         self.setWordWrap(True)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.verticalHeader().setVisible(False)
         self.setItemDelegate(PatientItemDelegate(self))
 
@@ -167,3 +172,8 @@ class DatabasePage(QtWidgets.QFrame):
             self.table.database.deletePatient(id)
         elif name == "select":
             self.loginButtonClicked.emit(id)
+        elif name == "edit":
+            item = self.table.selectedItems()
+            if item:
+                data = [_.text() for _ in item][:-1]
+                self.table.database.updatePatient(data)
